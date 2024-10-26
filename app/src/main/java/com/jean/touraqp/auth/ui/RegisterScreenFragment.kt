@@ -20,7 +20,7 @@ class RegisterScreenFragment : Fragment(R.layout.fragment_register_screen) {
         val binding = FragmentRegisterScreenBinding.bind(view)
         registerScreenBinding = binding
 
-        binding.btnToRegister.setOnClickListener(){
+        binding.btnToLogin.setOnClickListener(){
             findNavController().navigate(R.id.action_registerScreenFragment_to_loginScreenFragment)
         }
     }

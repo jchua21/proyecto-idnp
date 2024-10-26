@@ -8,7 +8,7 @@
     tools:context=".auth.ui.LoginScreenFragment">
 
     <TextView
-        android:id="@+id/loginTitle"
+        android:id="@+id/registerTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Crear Cuenta"
@@ -23,7 +23,7 @@
 
 
     <LinearLayout
-        android:id="@+id/loginForm"
+        android:id="@+id/registerForm"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
@@ -31,7 +31,7 @@
         android:paddingHorizontal="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginTitle">
+        app:layout_constraintTop_toBottomOf="@+id/registerTitle">
 
 
         <LinearLayout
@@ -106,7 +106,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
-                android:id="@+id/btnLogin"
+                android:id="@+id/btnRegister"
                 style="@style/Widget.TourAQP.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -126,8 +126,8 @@
         android:layout_marginTop="16dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/loginForm"
-        app:layout_constraintTop_toBottomOf="@+id/loginForm">
+        app:layout_constraintStart_toStartOf="@+id/registerForm"
+        app:layout_constraintTop_toBottomOf="@+id/registerForm">
 
         <TextView
             android:layout_width="wrap_content"
@@ -136,7 +136,7 @@
             android:textColor="@color/md_theme_onSurfaceVariant" />
 
         <Button
-            android:id="@+id/btnToRegister"
+            android:id="@+id/btnToLogin"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
