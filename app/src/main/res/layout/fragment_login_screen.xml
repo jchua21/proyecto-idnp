@@ -40,83 +40,31 @@
             android:orientation="vertical">
 
             <!--Field-->
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.TourAQP.InputAuth"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:hint="Nombre de Usuario"
+                app:startIconDrawable="@drawable/ic_person">
 
-                <LinearLayout
+                <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    app:layout_constraintEnd_toEndOf="@+id/textView"
-                    app:layout_constraintStart_toStartOf="@+id/textView"
-                    app:layout_constraintTop_toBottomOf="@+id/textView">
-
-                    <ImageView
-                        android:id="@+id/icon_username"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="icono usuario"
-                        android:src="@drawable/ic_person" />
-
-                    <EditText
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="14dp"
-                        android:background="@android:color/transparent"
-                        android:hint="Nombre de usuario" />
-
-                </LinearLayout>
-
-                <com.google.android.material.divider.MaterialDivider
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
-                    app:layout_constraintEnd_toEndOf="@+id/linearLayout"
-                    app:layout_constraintStart_toStartOf="@+id/linearLayout" />
-            </LinearLayout>
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--Field-->
-            <LinearLayout
+            <!--Field-->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.TourAQP.InputAuth"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="16dp"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:hint="Contraseña"
+                app:startIconDrawable="@drawable/ic_lock">
 
-                <LinearLayout
+                <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    app:layout_constraintEnd_toEndOf="@+id/textView"
-                    app:layout_constraintStart_toStartOf="@+id/textView"
-                    app:layout_constraintTop_toBottomOf="@+id/textView">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="icono password"
-                        android:src="@drawable/ic_lock" />
-
-                    <EditText
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="14dp"
-                        android:background="@android:color/transparent"
-                        android:hint="Contraseña"
-                        android:inputType="textPassword" />
-
-                </LinearLayout>
-
-                <com.google.android.material.divider.MaterialDivider
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
-                    app:layout_constraintEnd_toEndOf="@+id/linearLayout"
-                    app:layout_constraintStart_toStartOf="@+id/linearLayout" />
-            </LinearLayout>
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <Button
                 android:id="@+id/btnLogin"
@@ -143,15 +91,14 @@
         app:layout_constraintTop_toBottomOf="@+id/loginForm">
 
         <TextView
-            android:textColor="@color/md_theme_onSurfaceVariant"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="No tienes Cuenta?"
-             />
+            android:textColor="@color/md_theme_onSurfaceVariant" />
 
         <Button
-            style="@style/Widget.Material3.Button.TextButton"
             android:id="@+id/btnToRegister"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Registrate" />
