@@ -39,6 +39,10 @@ dependencies {
     //SplashScreen
     implementation(libs.androidx.core.splashscreen)
 
+    // Views/Fragments integration
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.ui)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
