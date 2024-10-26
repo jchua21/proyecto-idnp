@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--    Splash Screen-->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen.IconBackground">
+        <item name="windowSplashScreenBackground">@android:color/white</item>
+        <item name="windowSplashScreenIconBackgroundColor">@color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_aqp_tour</item>
+        <item name="windowSplashScreenAnimationDuration">300</item>
+        <item name="postSplashScreenTheme">@style/Theme.TourAQP</item>
+    </style>
+
+    <!--    Button (individual component) -->
+    <style name="Widget.TourAQP.Button" parent="Widget.Material3.Button">
+        <item name="android:width">180dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <style name="Widget.TourAQP.InputAuth" parent="Widget.Material3.TextInputLayout.FilledBox">
+        <item name="boxBackgroundColor">@android:color/transparent</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="expandedHintEnabled">true</item>
+    </style>
+</resources>
