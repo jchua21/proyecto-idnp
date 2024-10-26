@@ -19,6 +19,6 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        screenSplash.setKeepOnScreenCondition{ true }
+        screenSplash.setKeepOnScreenCondition{ false }
     }
 }
