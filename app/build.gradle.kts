@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -42,9 +44,28 @@ dependencies {
     //SplashScreen
     implementation(libs.androidx.core.splashscreen)
 
-    // Views/Fragments integration
+    // Views/Fragments Navigation integration
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
+
+    //Dagger Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+
+    //Viewmodel
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    runtimeOnly(libs.androidx.fragment.ktx)
+
+    //Room
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+    // To use Kotlin symbol processing (ksp)
+    ksp(libs.androidx.room.compiler)
+
+    //Firestore
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+    implementation("com.google.firebase:firebase-firestore")
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
