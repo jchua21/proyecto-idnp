@@ -16,7 +16,7 @@ class ValidatePasswordUseCase @Inject constructor(){
             return ValidationResult.ErrorResult(message = "La contrasena no puede estar vacio")
         }
 
-        val containsLetterAndDigits = password.any() { it.isDigit() || it.isLetter() }
+        val containsLetterAndDigits = password.any() { it.isDigit() } && password.any() {it.isLetter()}
         if (!containsLetterAndDigits) {
             return ValidationResult.ErrorResult(message = "La contrasena debe de tener por lo menos un digito y una letra")
         }
