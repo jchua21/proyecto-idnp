@@ -19,5 +19,6 @@
         <item name="boxBackgroundColor">@android:color/transparent</item>
         <item name="android:layout_marginBottom">16dp</item>
         <item name="expandedHintEnabled">true</item>
+        <item name="errorEnabled">true</item>
     </style>
 </resources>
