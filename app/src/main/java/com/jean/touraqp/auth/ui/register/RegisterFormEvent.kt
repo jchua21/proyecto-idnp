@@ -1,4 +1,4 @@
-package com.jean.touraqp.auth.ui.view.register
+package com.jean.touraqp.auth.ui.register
 
 sealed class RegisterFormEvent {
     data class UsernameChanged(val username: String): RegisterFormEvent()

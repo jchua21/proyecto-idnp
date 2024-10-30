@@ -1,4 +1,4 @@
-package com.jean.touraqp.auth.ui.view
+package com.jean.touraqp.auth.ui
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge

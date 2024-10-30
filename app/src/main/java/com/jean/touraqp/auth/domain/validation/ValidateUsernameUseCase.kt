@@ -1,4 +1,4 @@
-package com.jean.touraqp.auth.domain.use_cases
+package com.jean.touraqp.auth.domain.validation
 
 import javax.inject.Inject
 
@@ -16,7 +16,7 @@ class ValidateUsernameUseCase @Inject constructor() {
             return ValidationResult.ErrorResult(message = "El nombre de usuario debe de tener como minimo $MIN_REQUIRED_LENGTH caracteres")
         }
 
-        return  ValidationResult.SuccessfulResult
+        return ValidationResult.SuccessfulResult
     }
 
 }

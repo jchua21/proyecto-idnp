@@ -1,4 +1,4 @@
-package com.jean.touraqp.auth.ui.view.login
+package com.jean.touraqp.auth.ui.login
 
 sealed class LoginFormEvent {
     data class  UsernameChanged(val username: String): LoginFormEvent()

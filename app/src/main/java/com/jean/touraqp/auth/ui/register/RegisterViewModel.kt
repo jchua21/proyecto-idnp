@@ -1,16 +1,15 @@
-package com.jean.touraqp.auth.ui.view.register
+package com.jean.touraqp.auth.ui.register
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.jean.touraqp.auth.domain.use_cases.ValidateConfirmPasswordUseCase
-import com.jean.touraqp.auth.domain.use_cases.ValidateEmailUseCase
-import com.jean.touraqp.auth.domain.use_cases.ValidateNameUseCase
-import com.jean.touraqp.auth.domain.use_cases.ValidatePasswordUseCase
-import com.jean.touraqp.auth.domain.use_cases.ValidateUsernameUseCase
-import com.jean.touraqp.auth.domain.use_cases.ValidationResult
+import com.jean.touraqp.auth.domain.validation.ValidateConfirmPasswordUseCase
+import com.jean.touraqp.auth.domain.validation.ValidateEmailUseCase
+import com.jean.touraqp.auth.domain.validation.ValidateNameUseCase
+import com.jean.touraqp.auth.domain.validation.ValidatePasswordUseCase
+import com.jean.touraqp.auth.domain.validation.ValidateUsernameUseCase
+import com.jean.touraqp.auth.domain.validation.ValidationResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 

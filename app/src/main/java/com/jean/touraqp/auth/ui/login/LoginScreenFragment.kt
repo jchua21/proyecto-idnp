@@ -1,4 +1,4 @@
-package com.jean.touraqp.auth.ui.view.login
+package com.jean.touraqp.auth.ui.login
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

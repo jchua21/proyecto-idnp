@@ -1,4 +1,4 @@
-package com.jean.touraqp.auth.domain.use_cases
+package com.jean.touraqp.auth.domain.validation
 
 import javax.inject.Inject
 
@@ -8,7 +8,7 @@ class ValidateNameUseCase @Inject constructor() {
         if (name.isEmpty()) {
             return ValidationResult.ErrorResult(message = "Debe de ingresar su nombre")
         }
-        return  ValidationResult.SuccessfulResult
+        return ValidationResult.SuccessfulResult
     }
 
 }

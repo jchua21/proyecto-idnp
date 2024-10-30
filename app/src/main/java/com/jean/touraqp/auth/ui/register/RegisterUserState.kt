@@ -1,4 +1,4 @@
-package com.jean.touraqp.auth.ui.view.register
+package com.jean.touraqp.auth.ui.register
 
 data class RegisterInputState(
     var username: String = "",

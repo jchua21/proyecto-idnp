@@ -1,4 +1,4 @@
-package com.jean.touraqp.auth.domain.use_cases
+package com.jean.touraqp.auth.domain.validation
 
 sealed class ValidationResult{
     object SuccessfulResult: ValidationResult(){}

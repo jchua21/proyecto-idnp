@@ -1,4 +1,4 @@
-package com.jean.touraqp.auth.domain.use_cases
+package com.jean.touraqp.auth.domain.validation
 
 import android.util.Patterns
 import javax.inject.Inject
@@ -13,7 +13,7 @@ class ValidateEmailUseCase @Inject constructor() {
             return ValidationResult.ErrorResult(message = "El email debe de ser valido")
         }
 
-        return  ValidationResult.SuccessfulResult
+        return ValidationResult.SuccessfulResult
     }
 
 }

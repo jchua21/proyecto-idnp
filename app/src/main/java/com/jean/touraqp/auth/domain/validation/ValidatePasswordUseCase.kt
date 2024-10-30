@@ -1,4 +1,4 @@
-package com.jean.touraqp.auth.domain.use_cases
+package com.jean.touraqp.auth.domain.validation
 
 import android.util.Log
 import javax.inject.Inject

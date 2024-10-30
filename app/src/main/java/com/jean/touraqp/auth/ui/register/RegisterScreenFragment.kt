@@ -1,9 +1,6 @@
-package com.jean.touraqp.auth.ui.view.register
+package com.jean.touraqp.auth.ui.register
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.core.widget.doOnTextChanged
