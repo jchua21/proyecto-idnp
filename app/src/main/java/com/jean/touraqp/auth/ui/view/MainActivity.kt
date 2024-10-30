@@ -1,4 +1,4 @@
-package com.jean.touraqp
+package com.jean.touraqp.auth.ui.view
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -6,7 +6,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.jean.touraqp.R
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val screenSplash = installSplashScreen()
@@ -18,7 +21,6 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
         screenSplash.setKeepOnScreenCondition{ false }
     }
 }

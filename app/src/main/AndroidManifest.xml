@@ -10,10 +10,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_aqp_tour_round"
         android:supportsRtl="true"
+        android:name=".TourAqpApp"
         android:theme="@style/Theme.App.Starting"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".auth.ui.view.MainActivity"
             android:theme="@style/Theme.App.Starting"
             android:exported="true">
             <intent-filter>
