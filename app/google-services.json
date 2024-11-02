@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1011901671954",
+    "project_id": "touraqp-3941b",
+    "storage_bucket": "touraqp-3941b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1011901671954:android:6570c95e471708bd9f86cb",
+        "android_client_info": {
+          "package_name": "com.jean.touraqp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlZBKf67hRdgYCWJ4BglwYCmRjPCPGefI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -14,5 +14,4 @@ data class RegisterValidationState(
     val emailError: String? = null,
     val passwordError: String? = null,
     val confirmPasswordError: String? = null
-
 )

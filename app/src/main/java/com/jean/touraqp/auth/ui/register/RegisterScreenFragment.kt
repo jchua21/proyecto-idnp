@@ -3,6 +3,7 @@ package com.jean.touraqp.auth.ui.register
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -10,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.jean.touraqp.R
+import com.jean.touraqp.core.ResourceResult
 import com.jean.touraqp.databinding.FragmentRegisterScreenBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -34,19 +36,38 @@ class RegisterScreenFragment : Fragment(R.layout.fragment_register_screen) {
     private fun initObserves() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                registerViewModel.registrationValidationState.collect(){
-                    registerScreenBinding?.apply {
-                        editTextUsername.error = it.usernameError
-                        editTextName.error = it.nameError
-                        editTextEmail.error = it.emailError
-                        editTextPassword.error = it.passwordError
-                        editTextConfirmPassword.error = it.confirmPasswordError
+                launch {
+                    registerViewModel.registrationValidationState.collect() {
+                        registerScreenBinding?.apply {
+                            editTextUsername.error = it.usernameError
+                            editTextName.error = it.nameError
+                            editTextEmail.error = it.emailError
+                            editTextPassword.error = it.passwordError
+                            editTextConfirmPassword.error = it.confirmPasswordError
+                        }
+                    }
+                }
+                launch {
+                    registerViewModel.resultChannel.collect() {
+                        when(it){
+                            is ResourceResult.Error -> {
+                                Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
+                                registerScreenBinding?.btnRegister?.isEnabled = true
+                            }
+                            is ResourceResult.Loading -> {
+                                registerScreenBinding?.btnRegister?.isEnabled = false
+                            }
+                            is ResourceResult.Success -> {
+                                Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
+                                registerScreenBinding?.btnRegister?.isEnabled = true
+                            }
+                        }
                     }
                 }
             }
+
         }
     }
-
 
 
     private fun initListeners() {
@@ -55,23 +76,23 @@ class RegisterScreenFragment : Fragment(R.layout.fragment_register_screen) {
                 findNavController().navigate(R.id.action_registerScreenFragment_to_loginScreenFragment)
             }
 
-            editTextUsername.doOnTextChanged { text, start, before, count ->
+            editTextUsername.doOnTextChanged { text, _, _, _ ->
                 registerViewModel.onEvent(RegisterFormEvent.UsernameChanged(text.toString()))
             }
 
-            editTextName.doOnTextChanged { text, start, before, count ->
+            editTextName.doOnTextChanged { text, _, _, _ ->
                 registerViewModel.onEvent(RegisterFormEvent.NameChanged(text.toString()))
             }
 
-            editTextEmail.doOnTextChanged { text, start, before, count ->
+            editTextEmail.doOnTextChanged { text, _, _, _ ->
                 registerViewModel.onEvent(RegisterFormEvent.EmailChanged(text.toString()))
             }
 
-            editTextPassword.doOnTextChanged { text, start, before, count ->
+            editTextPassword.doOnTextChanged { text, _, _, _ ->
                 registerViewModel.onEvent(RegisterFormEvent.PasswordChanged(text.toString()))
             }
 
-            editTextConfirmPassword.doOnTextChanged { text, start, before, count ->
+            editTextConfirmPassword.doOnTextChanged { text, _, _, _ ->
                 registerViewModel.onEvent(RegisterFormEvent.ConfirmPasswordChanged(text.toString()))
             }
 

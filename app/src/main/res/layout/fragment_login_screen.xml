@@ -44,7 +44,7 @@
                 style="@style/Widget.TourAQP.InputAuth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nombre de Usuario"
+                android:hint="Correo Electronico"
                 app:startIconDrawable="@drawable/ic_person">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -101,7 +101,7 @@
             android:textColor="@color/md_theme_onSurfaceVariant" />
 
         <Button
-            android:id="@+id/btnToRegister"
+            android:id="@+id/btnGoToRegister"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

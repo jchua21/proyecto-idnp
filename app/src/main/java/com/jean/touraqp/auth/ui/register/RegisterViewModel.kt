@@ -2,15 +2,23 @@ package com.jean.touraqp.auth.ui.register
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.jean.touraqp.auth.domain.authentication.SignUpUserUseCase
+import com.jean.touraqp.auth.domain.authentication.model.User
 import com.jean.touraqp.auth.domain.validation.ValidateConfirmPasswordUseCase
 import com.jean.touraqp.auth.domain.validation.ValidateEmailUseCase
 import com.jean.touraqp.auth.domain.validation.ValidateNameUseCase
 import com.jean.touraqp.auth.domain.validation.ValidatePasswordUseCase
 import com.jean.touraqp.auth.domain.validation.ValidateUsernameUseCase
 import com.jean.touraqp.auth.domain.validation.ValidationResult
+import com.jean.touraqp.core.ResourceResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,14 +27,22 @@ class RegisterViewModel @Inject constructor(
     private val validateNameUseCase: ValidateNameUseCase,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
-    private val validateConfirmPasswordUseCase: ValidateConfirmPasswordUseCase
+    private val validateConfirmPasswordUseCase: ValidateConfirmPasswordUseCase,
+    private val signUpUserUseCase: SignUpUserUseCase
 ) : ViewModel() {
 
+    // It makes more sense with real-time validation
     private val _registrationInputState = MutableStateFlow(RegisterInputState())
     val registrationInputState = _registrationInputState.asStateFlow()
 
+    //Validation State
     private val _registrationValidationState = MutableStateFlow(RegisterValidationState())
     val registrationValidationState = _registrationValidationState.asStateFlow()
+
+    // One-time events
+    private val _resultChannel = Channel<ResourceResult<User>>()
+    val resultChannel = _resultChannel.receiveAsFlow()
+
 
     fun onEvent(event: RegisterFormEvent) {
         when (event) {
@@ -36,11 +52,13 @@ class RegisterViewModel @Inject constructor(
             }
 
             is RegisterFormEvent.PasswordChanged -> {
-                _registrationInputState.value = registrationInputState.value.copy(password = event.password)
+                _registrationInputState.value =
+                    registrationInputState.value.copy(password = event.password)
             }
 
             is RegisterFormEvent.EmailChanged -> {
-                _registrationInputState.value = registrationInputState.value.copy(email = event.email)
+                _registrationInputState.value =
+                    registrationInputState.value.copy(email = event.email)
             }
 
             is RegisterFormEvent.NameChanged -> {
@@ -48,27 +66,58 @@ class RegisterViewModel @Inject constructor(
             }
 
             is RegisterFormEvent.UsernameChanged -> {
-                _registrationInputState.value = registrationInputState.value.copy(username = event.username)
+                _registrationInputState.value =
+                    registrationInputState.value.copy(username = event.username)
             }
 
             RegisterFormEvent.Submit -> {
                 submitData()
             }
-
         }
     }
 
+    private fun submitData() {
+        val (username, name, email, password, confirmPassword) = _registrationInputState.value
 
-    fun submitData() {
-        val usernameResult = validateUsernameUseCase.execute(_registrationInputState.value.username)
-        val nameResult = validateNameUseCase.execute(_registrationInputState.value.name)
-        val emailResult = validateEmailUseCase.execute(_registrationInputState.value.email)
-        val passwordResult = validatePasswordUseCase.execute(_registrationInputState.value.password)
-        val confirmPasswordResult = validateConfirmPasswordUseCase.execute(
-            _registrationInputState.value.confirmPassword,
-            _registrationInputState.value.password
+        val validationErrors = validateInputs(
+            username = username,
+            name = name,
+            email = email,
+            password = password,
+            confirmPassword = confirmPassword
         )
 
+        if (validationErrors != null) {
+            _registrationValidationState.value = validationErrors
+            return
+        }
+
+        // Register User
+        Log.d("SUBMIT", "Register User ")
+        val user = User(username = username, name = name, email = email, password = password)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            signUpUserUseCase.execute(user).collect() { resourceResult ->
+                _resultChannel.send(resourceResult)
+            }
+        }
+    }
+
+    private fun validateInputs(
+        username: String,
+        name: String,
+        email: String,
+        password: String,
+        confirmPassword: String
+    ): RegisterValidationState? {
+        val usernameResult = validateUsernameUseCase.execute(username)
+        val nameResult = validateNameUseCase.execute(name)
+        val emailResult = validateEmailUseCase.execute(email)
+        val passwordResult = validatePasswordUseCase.execute(password)
+        val confirmPasswordResult = validateConfirmPasswordUseCase.execute(
+            confirmPassword,
+            password
+        )
         val hasError =
             listOf(
                 usernameResult,
@@ -76,21 +125,18 @@ class RegisterViewModel @Inject constructor(
                 emailResult,
                 passwordResult,
                 confirmPasswordResult
-            ).any(){it is ValidationResult.ErrorResult}
+            ).any() { it is ValidationResult.ErrorResult }
 
         if(hasError){
-            _registrationValidationState.value = _registrationValidationState.value.copy(
+            //It only emits values when there is a change, which can prevent unnecessary updates in your UI when the same error messages are still present -> StateFlow.
+            return RegisterValidationState(
                 usernameError = (usernameResult as? ValidationResult.ErrorResult)?.message,
                 nameError = (nameResult as? ValidationResult.ErrorResult)?.message,
                 emailError = (emailResult as? ValidationResult.ErrorResult)?.message,
                 passwordError = (passwordResult as? ValidationResult.ErrorResult)?.message,
                 confirmPasswordError = (confirmPasswordResult as? ValidationResult.ErrorResult)?.message,
             )
-            return
         }
-
-        // Register User
-        Log.d("SUBMIT", "Register User ")
+        return null
     }
-
 }

@@ -2,25 +2,39 @@ package com.jean.touraqp.auth.ui.login
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.jean.touraqp.auth.domain.authentication.LogInUserUseCase
+import com.jean.touraqp.auth.domain.authentication.model.User
+import com.jean.touraqp.auth.domain.validation.ValidateEmailUseCase
 import com.jean.touraqp.auth.domain.validation.ValidatePasswordUseCase
-import com.jean.touraqp.auth.domain.validation.ValidateUsernameUseCase
 import com.jean.touraqp.auth.domain.validation.ValidationResult
+import com.jean.touraqp.core.ResourceResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val validateUsernameUseCase: ValidateUsernameUseCase,
-    private val validatePasswordUseCase: ValidatePasswordUseCase
+    private val validateEmailUseCase: ValidateEmailUseCase,
+    private val validatePasswordUseCase: ValidatePasswordUseCase,
+    private val logInUserUseCase: LogInUserUseCase
 ) : ViewModel() {
 
+    // Input State
     private val _loginInputState = MutableStateFlow(LoginInputState())
     val loginInputState = _loginInputState.asStateFlow()
 
+    //Error Validation messages
     private val _loginValidationState = MutableStateFlow(LoginValidationState())
     val loginValidationState = _loginValidationState.asStateFlow()
+
+    private val _operationResultChannel = Channel<ResourceResult<User>>()
+    val operationResulChannel = _operationResultChannel.receiveAsFlow()
 
     fun onEvent(event: LoginFormEvent) {
         when (event) {
@@ -28,8 +42,8 @@ class LoginViewModel @Inject constructor(
                 _loginInputState.value = _loginInputState.value.copy(password = event.password)
             }
 
-            is LoginFormEvent.UsernameChanged -> {
-                _loginInputState.value = _loginInputState.value.copy(username = event.username)
+            is LoginFormEvent.EmailChanged -> {
+                _loginInputState.value = _loginInputState.value.copy(email = event.email)
             }
 
             LoginFormEvent.Submit -> submit()
@@ -38,26 +52,39 @@ class LoginViewModel @Inject constructor(
 
     private fun submit() {
         //Validate
-        val (username, password) = _loginInputState.value
-        Log.d("values", "$username!!!")
-        Log.d("values", "$password!!!")
-        val usernameResult = validateUsernameUseCase.execute(username = username)
-        val passwordResult = validatePasswordUseCase.execute(password = password)
+        val (email, password) = _loginInputState.value
 
-        val hasError =
-            listOf(usernameResult, passwordResult).any() { it is ValidationResult.ErrorResult }
-
-
-        if (hasError) {
-            _loginValidationState.value = _loginValidationState.value.copy(
-                usernameError = (usernameResult as? ValidationResult.ErrorResult)?.message,
-                passwordError = (passwordResult as? ValidationResult.ErrorResult)?.message
-            )
+        val validationErrors = validateInputs(email, password)
+        if (validationErrors != null) {
+            _loginValidationState.value = validationErrors
             return
         }
+        viewModelScope.launch(Dispatchers.IO) {
 
-        //TODO
-        Log.d("SUBMIT", "LOGGIN!!!")
+            logInUserUseCase.execute(email = email, password = password).collect() {
+                _operationResultChannel.send(it)
+            }
+        }
+    }
+
+    private fun validateInputs(
+        email: String,
+        password: String
+    ): LoginValidationState? {
+        val emailResult = validateEmailUseCase.execute(email)
+        val passwordResult = validatePasswordUseCase.execute(password)
+
+        val hasError =
+            listOf(emailResult, passwordResult).any() { it is ValidationResult.ErrorResult }
+
+        if (hasError) {
+            return LoginValidationState(
+                emailError = (emailResult as? ValidationResult.ErrorResult)?.message,
+                passwordError = (passwordResult as? ValidationResult.ErrorResult)?.message,
+            )
+        }
+
+        return null
     }
 
 }
