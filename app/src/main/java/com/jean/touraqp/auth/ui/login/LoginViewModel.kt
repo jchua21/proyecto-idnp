@@ -8,6 +8,7 @@ import com.jean.touraqp.auth.domain.validation.ValidatePasswordUseCase
 import com.jean.touraqp.auth.domain.validation.ValidationResult
 import com.jean.touraqp.auth.ui.model.UserUI
 import com.jean.touraqp.core.utils.ResourceResult
+import com.jean.touraqp.core.UserSession
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -22,6 +23,7 @@ class LoginViewModel @Inject constructor(
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
     private val logInUserUseCase: LogInUserUseCase,
+    private val userSession: UserSession
 ) : ViewModel() {
 
     // Input State
@@ -83,6 +85,13 @@ class LoginViewModel @Inject constructor(
                                 user = user,
                                 resultMessage = message
                             )
+                        )
+                        // Update User Session
+                        userSession.updateSession(
+                            id = user.id!!,
+                            name = user.name,
+                            email = user.email,
+                            username = user.username
                         )
                     }
                 }

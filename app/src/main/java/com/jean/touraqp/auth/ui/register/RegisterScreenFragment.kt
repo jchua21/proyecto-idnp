@@ -51,7 +51,9 @@ class RegisterScreenFragment : Fragment(R.layout.fragment_register_screen) {
                         registerScreenBinding?.btnRegister?.isEnabled = !registerResult.isLoading
                         Toast.makeText(context, registerResult.resultMessage, Toast.LENGTH_SHORT)
                             .show()
-
+                        if(registerResult.isSuccess){
+                            findNavController().navigate(R.id.action_registerScreenFragment_to_homeScreenFragment)
+                        }
                     }
                 }
             }

@@ -30,6 +30,7 @@ class RegisterViewModel @Inject constructor(
     private val validatePasswordUseCase: ValidatePasswordUseCase,
     private val validateConfirmPasswordUseCase: ValidateConfirmPasswordUseCase,
     private val signUpUserUseCase: SignUpUserUseCase,
+    private val userSession: UserSession
 ) : ViewModel() {
 
     //User model
@@ -113,6 +114,13 @@ class RegisterViewModel @Inject constructor(
                             )
                         )
 
+                        // Update User Session
+                        userSession.updateSession(
+                            id = user.id!!,
+                            name = user.name,
+                            email = user.email,
+                            username = user.username
+                        )
                     }
                 }
             }

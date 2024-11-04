@@ -66,6 +66,9 @@ class LoginScreenFragment : Fragment(R.layout.fragment_login_screen) {
                         Toast.makeText(context, loginResult.resultMessage.orEmpty(), Toast.LENGTH_SHORT)
                             .show()
 
+                        if(loginResult.isSuccess){
+                            findNavController().navigate(R.id.action_loginScreenFragment_to_homeScreenFragment)
+                        }
                     }
                 }
             }
