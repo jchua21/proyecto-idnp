@@ -1,6 +1,5 @@
 package com.jean.touraqp.auth.di
 
-import com.jean.touraqp.auth.data.utils.PasswordHasher
 import com.lambdapioneer.argon2kt.Argon2Kt
 import dagger.Module
 import dagger.Provides

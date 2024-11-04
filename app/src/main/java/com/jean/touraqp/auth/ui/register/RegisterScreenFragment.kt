@@ -11,7 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.jean.touraqp.R
-import com.jean.touraqp.core.ResourceResult
 import com.jean.touraqp.databinding.FragmentRegisterScreenBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -37,31 +36,22 @@ class RegisterScreenFragment : Fragment(R.layout.fragment_register_screen) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    registerViewModel.registrationValidationState.collect() {
+                    registerViewModel.registrationValidationState.collect() { validationErrors ->
                         registerScreenBinding?.apply {
-                            editTextUsername.error = it.usernameError
-                            editTextName.error = it.nameError
-                            editTextEmail.error = it.emailError
-                            editTextPassword.error = it.passwordError
-                            editTextConfirmPassword.error = it.confirmPasswordError
+                            editTextUsername.error = validationErrors.usernameError
+                            editTextName.error = validationErrors.nameError
+                            editTextEmail.error = validationErrors.emailError
+                            editTextPassword.error = validationErrors.passwordError
+                            editTextConfirmPassword.error = validationErrors.confirmPasswordError
                         }
                     }
                 }
                 launch {
-                    registerViewModel.resultChannel.collect() {
-                        when(it){
-                            is ResourceResult.Error -> {
-                                Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
-                                registerScreenBinding?.btnRegister?.isEnabled = true
-                            }
-                            is ResourceResult.Loading -> {
-                                registerScreenBinding?.btnRegister?.isEnabled = false
-                            }
-                            is ResourceResult.Success -> {
-                                Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
-                                registerScreenBinding?.btnRegister?.isEnabled = true
-                            }
-                        }
+                    registerViewModel.resultChannel.collect() { registerResult ->
+                        registerScreenBinding?.btnRegister?.isEnabled = !registerResult.isLoading
+                        Toast.makeText(context, registerResult.resultMessage, Toast.LENGTH_SHORT)
+                            .show()
+
                     }
                 }
             }

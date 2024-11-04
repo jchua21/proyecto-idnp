@@ -1,6 +1,7 @@
 package com.jean.touraqp.auth.ui.login
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Toast
@@ -11,10 +12,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.jean.touraqp.R
-import com.jean.touraqp.core.ResourceResult
 import com.jean.touraqp.databinding.FragmentLoginScreenBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -35,10 +34,10 @@ class LoginScreenFragment : Fragment(R.layout.fragment_login_screen) {
 
     private fun initListeners() {
         loginScreenBinding?.apply {
-            btnLogin.setOnClickListener() {
+            btnGoToRegister.setOnClickListener() {
                 findNavController().navigate(R.id.action_loginScreenFragment_to_registerScreenFragment)
             }
-            btnLogin.setOnClickListener(){
+            btnLogin.setOnClickListener() {
                 loginViewModel.onEvent(LoginFormEvent.Submit)
             }
             inputTextUsername.doOnTextChanged { text, _, _, _ ->
@@ -54,29 +53,19 @@ class LoginScreenFragment : Fragment(R.layout.fragment_login_screen) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    loginViewModel.loginValidationState.collect() {
+                    loginViewModel.loginValidationState.collect() { validationErrors ->
                         loginScreenBinding?.apply {
-                            inputTextUsername.error = it.emailError
-                            inputTextPassword.error = it.passwordError
+                            inputTextUsername.error = validationErrors.emailError
+                            inputTextPassword.error = validationErrors.passwordError
                         }
                     }
                 }
-
                 launch {
-                    loginViewModel.operationResulChannel.collect(){ operationResult ->
-                        when(operationResult) {
-                            is ResourceResult.Error -> {
-                                loginScreenBinding?.btnLogin?.isEnabled = true
-                                Toast.makeText(context,operationResult.message,Toast.LENGTH_LONG).show()
-                            }
-                            is ResourceResult.Loading -> {
-                                loginScreenBinding?.btnLogin?.isEnabled = false
-                            }
-                            is ResourceResult.Success -> {
-                                loginScreenBinding?.btnLogin?.isEnabled = true
-                                Toast.makeText(context,operationResult.message,Toast.LENGTH_LONG).show()
-                            }
-                        }
+                    loginViewModel.operationResulChannel.collect() { loginResult ->
+                        loginScreenBinding?.btnLogin?.isEnabled = !loginResult.isLoading
+                        Toast.makeText(context, loginResult.resultMessage.orEmpty(), Toast.LENGTH_SHORT)
+                            .show()
+
                     }
                 }
             }

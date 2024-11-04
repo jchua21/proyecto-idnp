@@ -1,17 +1,18 @@
 package com.jean.touraqp.auth.ui.register
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jean.touraqp.auth.domain.authentication.SignUpUserUseCase
-import com.jean.touraqp.auth.domain.authentication.model.User
 import com.jean.touraqp.auth.domain.validation.ValidateConfirmPasswordUseCase
 import com.jean.touraqp.auth.domain.validation.ValidateEmailUseCase
 import com.jean.touraqp.auth.domain.validation.ValidateNameUseCase
 import com.jean.touraqp.auth.domain.validation.ValidatePasswordUseCase
 import com.jean.touraqp.auth.domain.validation.ValidateUsernameUseCase
 import com.jean.touraqp.auth.domain.validation.ValidationResult
-import com.jean.touraqp.core.ResourceResult
+import com.jean.touraqp.auth.ui.model.UserUI
+import com.jean.touraqp.auth.ui.model.toUserDomain
+import com.jean.touraqp.core.utils.ResourceResult
+import com.jean.touraqp.core.UserSession
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -28,48 +29,38 @@ class RegisterViewModel @Inject constructor(
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
     private val validateConfirmPasswordUseCase: ValidateConfirmPasswordUseCase,
-    private val signUpUserUseCase: SignUpUserUseCase
+    private val signUpUserUseCase: SignUpUserUseCase,
 ) : ViewModel() {
 
-    // It makes more sense with real-time validation
-    private val _registrationInputState = MutableStateFlow(RegisterInputState())
-    val registrationInputState = _registrationInputState.asStateFlow()
+    //User model
+    private var userUI = UserUI()
 
     //Validation State
     private val _registrationValidationState = MutableStateFlow(RegisterValidationState())
     val registrationValidationState = _registrationValidationState.asStateFlow()
 
     // One-time events
-    private val _resultChannel = Channel<ResourceResult<User>>()
+    private val _resultChannel = Channel<RegisterResultState>()
     val resultChannel = _resultChannel.receiveAsFlow()
 
 
     fun onEvent(event: RegisterFormEvent) {
         when (event) {
             is RegisterFormEvent.ConfirmPasswordChanged -> {
-                _registrationInputState.value =
-                    registrationInputState.value.copy(confirmPassword = event.confirmPassword)
+                userUI = userUI.copy(confirmPassword = event.confirmPassword)
             }
-
             is RegisterFormEvent.PasswordChanged -> {
-                _registrationInputState.value =
-                    registrationInputState.value.copy(password = event.password)
+                userUI = userUI.copy(password = event.password)
             }
-
             is RegisterFormEvent.EmailChanged -> {
-                _registrationInputState.value =
-                    registrationInputState.value.copy(email = event.email)
+                userUI = userUI.copy(email = event.email)
             }
-
             is RegisterFormEvent.NameChanged -> {
-                _registrationInputState.value = registrationInputState.value.copy(name = event.name)
+                userUI = userUI.copy(name = event.name)
             }
-
             is RegisterFormEvent.UsernameChanged -> {
-                _registrationInputState.value =
-                    registrationInputState.value.copy(username = event.username)
+                userUI = userUI.copy(username = event.username)
             }
-
             RegisterFormEvent.Submit -> {
                 submitData()
             }
@@ -77,7 +68,7 @@ class RegisterViewModel @Inject constructor(
     }
 
     private fun submitData() {
-        val (username, name, email, password, confirmPassword) = _registrationInputState.value
+        val (_,username, name, email, password, confirmPassword) = userUI
 
         val validationErrors = validateInputs(
             username = username,
@@ -93,12 +84,37 @@ class RegisterViewModel @Inject constructor(
         }
 
         // Register User
-        Log.d("SUBMIT", "Register User ")
-        val user = User(username = username, name = name, email = email, password = password)
+        val userData = UserUI(username = username, name = name, email = email, password = password)
 
         viewModelScope.launch(Dispatchers.IO) {
-            signUpUserUseCase.execute(user).collect() { resourceResult ->
-                _resultChannel.send(resourceResult)
+            signUpUserUseCase.execute(userData.toUserDomain()).collect() { result ->
+                when (result) {
+                    is ResourceResult.Error -> {
+                        _resultChannel.send(RegisterResultState(resultMessage = result.message))
+                    }
+
+                    is ResourceResult.Loading -> {
+                        _resultChannel.send(
+                            RegisterResultState(
+                                resultMessage = "Loading!!!",
+                                isLoading = true
+                            )
+                        )
+                    }
+                    is ResourceResult.Success -> {
+                        val user = result.data!!
+                        val message = result.message
+
+                        _resultChannel.send(
+                            RegisterResultState(
+                                isSuccess = true,
+                                resultMessage = message,
+                                user = user
+                            )
+                        )
+
+                    }
+                }
             }
         }
     }
@@ -127,7 +143,7 @@ class RegisterViewModel @Inject constructor(
                 confirmPasswordResult
             ).any() { it is ValidationResult.ErrorResult }
 
-        if(hasError){
+        if (hasError) {
             //It only emits values when there is a change, which can prevent unnecessary updates in your UI when the same error messages are still present -> StateFlow.
             return RegisterValidationState(
                 usernameError = (usernameResult as? ValidationResult.ErrorResult)?.message,

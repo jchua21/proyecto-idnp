@@ -1,12 +1,7 @@
 package com.jean.touraqp.auth.ui.register
 
-data class RegisterInputState(
-    var username: String = "",
-    val name: String = "",
-    val email: String = "",
-    val password: String = "",
-    val confirmPassword: String = "",
-)
+import com.jean.touraqp.auth.ui.model.UserUI
+
 
 data class RegisterValidationState(
     val usernameError: String? = null,
@@ -14,4 +9,11 @@ data class RegisterValidationState(
     val emailError: String? = null,
     val passwordError: String? = null,
     val confirmPasswordError: String? = null
+)
+
+data class RegisterResultState(
+    val isSuccess: Boolean = false,
+    val isLoading: Boolean = false,
+    val resultMessage: String? = null,
+    val user: UserUI? = null
 )

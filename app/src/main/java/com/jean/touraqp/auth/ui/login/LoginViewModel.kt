@@ -1,14 +1,13 @@
 package com.jean.touraqp.auth.ui.login
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jean.touraqp.auth.domain.authentication.LogInUserUseCase
-import com.jean.touraqp.auth.domain.authentication.model.User
 import com.jean.touraqp.auth.domain.validation.ValidateEmailUseCase
 import com.jean.touraqp.auth.domain.validation.ValidatePasswordUseCase
 import com.jean.touraqp.auth.domain.validation.ValidationResult
-import com.jean.touraqp.core.ResourceResult
+import com.jean.touraqp.auth.ui.model.UserUI
+import com.jean.touraqp.core.utils.ResourceResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -22,28 +21,27 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
-    private val logInUserUseCase: LogInUserUseCase
+    private val logInUserUseCase: LogInUserUseCase,
 ) : ViewModel() {
 
     // Input State
-    private val _loginInputState = MutableStateFlow(LoginInputState())
-    val loginInputState = _loginInputState.asStateFlow()
+    private var userUI = UserUI()
 
     //Error Validation messages
     private val _loginValidationState = MutableStateFlow(LoginValidationState())
     val loginValidationState = _loginValidationState.asStateFlow()
 
-    private val _operationResultChannel = Channel<ResourceResult<User>>()
+    private val _operationResultChannel = Channel<LoginResultState>()
     val operationResulChannel = _operationResultChannel.receiveAsFlow()
 
     fun onEvent(event: LoginFormEvent) {
         when (event) {
             is LoginFormEvent.PasswordChanged -> {
-                _loginInputState.value = _loginInputState.value.copy(password = event.password)
+                userUI = userUI.copy(password = event.password)
             }
 
             is LoginFormEvent.EmailChanged -> {
-                _loginInputState.value = _loginInputState.value.copy(email = event.email)
+                userUI = userUI.copy(email = event.email)
             }
 
             LoginFormEvent.Submit -> submit()
@@ -52,7 +50,7 @@ class LoginViewModel @Inject constructor(
 
     private fun submit() {
         //Validate
-        val (email, password) = _loginInputState.value
+        val (_, _, _, email, password) = userUI
 
         val validationErrors = validateInputs(email, password)
         if (validationErrors != null) {
@@ -60,9 +58,34 @@ class LoginViewModel @Inject constructor(
             return
         }
         viewModelScope.launch(Dispatchers.IO) {
+            logInUserUseCase.execute(email = email, password = password).collect() { result ->
+                when (result) {
+                    is ResourceResult.Error -> {
+                        _operationResultChannel.send(LoginResultState(resultMessage = result.message))
+                    }
 
-            logInUserUseCase.execute(email = email, password = password).collect() {
-                _operationResultChannel.send(it)
+                    is ResourceResult.Loading -> {
+                        _operationResultChannel.send(
+                            LoginResultState(
+                                isLoading = true,
+                                resultMessage = "Loading..."
+                            )
+                        )
+                    }
+
+                    is ResourceResult.Success -> {
+                        val user = result.data!!
+                        val message = result.message
+
+                        _operationResultChannel.send(
+                            LoginResultState(
+                                isSuccess = true,
+                                user = user,
+                                resultMessage = message
+                            )
+                        )
+                    }
+                }
             }
         }
     }
@@ -83,7 +106,6 @@ class LoginViewModel @Inject constructor(
                 passwordError = (passwordResult as? ValidationResult.ErrorResult)?.message,
             )
         }
-
         return null
     }
 
