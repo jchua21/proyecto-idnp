@@ -3,51 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_graph"
-    app:startDestination="@id/loginScreenFragment">
-
+    app:startDestination="@id/auth_graph">
+    <include app:graph="@navigation/auth_graph" />
+    <include app:graph="@navigation/core_graph" />
+    <action
+        android:id="@+id/action_global_core_graph"
+        app:destination="@id/coreLayoutFragment" />
     <fragment
-        android:id="@+id/loginScreenFragment"
-        android:name="com.jean.touraqp.auth.ui.login.LoginScreenFragment"
-        android:label="fragment_login_screen"
-        tools:layout="@layout/fragment_login_screen" >
+        android:id="@+id/coreLayoutFragment"
+        android:name="com.jean.touraqp.core.ui.CoreLayoutFragment"
+        android:label="fragment_core_layout"
+        tools:layout="@layout/fragment_core_layout"
+        >
         <action
-            android:id="@+id/action_loginScreenFragment_to_registerScreenFragment"
-            app:destination="@id/registerScreenFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-        <action
-            android:id="@+id/action_loginScreenFragment_to_homeScreenFragment"
-            app:destination="@id/homeScreenFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            android:id="@+id/action_mainLayoutFragment_to_core_graph"
+            app:destination="@id/core_graph" />
     </fragment>
-    <fragment
-        android:id="@+id/registerScreenFragment"
-        android:name="com.jean.touraqp.auth.ui.register.RegisterScreenFragment"
-        android:label="fragment_register_screen"
-        tools:layout="@layout/fragment_register_screen" >
-        <action
-            android:id="@+id/action_registerScreenFragment_to_loginScreenFragment"
-            app:destination="@id/loginScreenFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-        <action
-            android:id="@+id/action_registerScreenFragment_to_homeScreenFragment"
-            app:destination="@id/homeScreenFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-    </fragment>
-    <fragment
-        android:id="@+id/homeScreenFragment"
-        android:name="com.jean.touraqp.home.ui.HomeScreenFragment"
-        android:label="fragment_home_screen"
-        tools:layout="@layout/fragment_home_screen" />
 </navigation>

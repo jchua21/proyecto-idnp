@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/auth_graph"
+    app:startDestination="@id/loginScreenFragment">
+
+    <fragment
+        android:id="@+id/loginScreenFragment"
+        android:name="com.jean.touraqp.auth.ui.login.LoginScreenFragment"
+        android:label="fragment_login_screen"
+        tools:layout="@layout/fragment_login_screen" >
+        <action
+            android:id="@+id/action_loginScreenFragment_to_registerScreenFragment"
+            app:destination="@id/registerScreenFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerScreenFragment"
+        android:name="com.jean.touraqp.auth.ui.register.RegisterScreenFragment"
+        android:label="RegisterScreenFragment"
+        tools:layout="@layout/fragment_register_screen"
+        >
+        <action
+            android:id="@+id/action_registerScreenFragment_to_loginScreenFragment"
+            app:destination="@id/loginScreenFragment" />
+    </fragment>
+</navigation>

@@ -2,18 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/profile"
+        android:id="@+id/profileScreenFragment"
         android:title="Perfil"
         android:icon="@drawable/ic_profile"
         />
     <item
-        android:id="@+id/home"
+        android:id="@+id/homeScreenFragment"
         android:title="Home"
         android:checked="true"
         android:icon="@drawable/ic_home"
         />
     <item
-        android:id="@+id/map"
+        android:id="@+id/mapScreenFragment"
         android:title="Mapa"
         android:icon="@drawable/ic_map"
         />

@@ -22,7 +22,7 @@ class HomeScreenFragment : Fragment(R.layout.fragment_home_screen) {
         super.onViewCreated(view, savedInstanceState)
         homeScreenBinding = FragmentHomeScreenBinding.bind(view)
 
-        homeScreenBinding?.userUsername?.text = userSession.username
+//        homeScreenBinding?.userUsername?.text = userSession.username
     }
 
     override fun onDestroyView() {
