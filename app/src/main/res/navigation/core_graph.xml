@@ -11,7 +11,7 @@
         tools:layout="@layout/fragment_home_screen" />
     <fragment
         android:id="@+id/mapScreenFragment"
-        android:name="com.jean.touraqp.map.ui.MapScreenFragment"
+        android:name="com.jean.touraqp.touristicPlaces.presentation.map.MapScreenFragment"
         android:label="fragment_map_screen"
         tools:layout="@layout/fragment_map_screen" />
     <fragment
