@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jean.touraqp.R
 import com.jean.touraqp.databinding.FragmentSearchScreenBinding
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 class SearchScreenFragment : Fragment(R.layout.fragment_search_screen) {
 
     private val searchViewModel: SearchViewModel by viewModels()
-    private var fragmentSearchScreenBinding : FragmentSearchScreenBinding? = null
+    private var fragmentSearchScreenBinding: FragmentSearchScreenBinding? = null
     private lateinit var searchListAdapter: SearchListAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -33,15 +34,15 @@ class SearchScreenFragment : Fragment(R.layout.fragment_search_screen) {
         fragmentSearchScreenBinding = null
     }
 
-    private fun initUI(){
+    private fun initUI() {
         setSearchListAdapter()
         setTouristicPlacesRecyclerView()
     }
 
     private fun initObservers() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                searchViewModel.searchState.collect(){ state ->
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                searchViewModel.searchState.collect() { state ->
                     searchListAdapter.updateList(state.touristicPlaceList)
                     fragmentSearchScreenBinding?.progressBar?.isVisible = state.isLoading
                 }
@@ -49,11 +50,21 @@ class SearchScreenFragment : Fragment(R.layout.fragment_search_screen) {
         }
     }
 
-    private fun setSearchListAdapter(){
-        searchListAdapter = SearchListAdapter()
+    private fun setSearchListAdapter() {
+        searchListAdapter = SearchListAdapter(onClickListener = { id ->
+            navigateToDetailTouristicPlace(id)
+        })
     }
 
-    private fun setTouristicPlacesRecyclerView(){
+    private fun navigateToDetailTouristicPlace(id: String) {
+        findNavController().navigate(
+            SearchScreenFragmentDirections.actionSearchScreenFragmentToTouristicPlaceDetailScreenFragment(
+                touristicPlaceId = id
+            )
+        )
+    }
+
+    private fun setTouristicPlacesRecyclerView() {
         fragmentSearchScreenBinding?.rvTouristicPlaces?.apply {
             setHasFixedSize(true)
             adapter = searchListAdapter

@@ -9,7 +9,8 @@ import com.jean.touraqp.databinding.ItemTouristicPlaceBinding
 import com.jean.touraqp.touristicPlaces.domain.model.TouristicPlace
 
 class SearchListAdapter(
-    private var touristicPlaceList: List<TouristicPlace> = emptyList()
+    private var touristicPlaceList: List<TouristicPlace> = emptyList(),
+    private val onClickListener: (id: String) -> Unit
 ): RecyclerView.Adapter<SearchListAdapter.SearchListViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchListViewHolder {
@@ -38,6 +39,7 @@ class SearchListAdapter(
 
         fun bind(touristicPlace: TouristicPlace){
             binding.apply {
+                root.setOnClickListener(){onClickListener(touristicPlace.id)}
                 titlePlace.text = touristicPlace.name
                 descriptionPlace.text = touristicPlace.description
             }

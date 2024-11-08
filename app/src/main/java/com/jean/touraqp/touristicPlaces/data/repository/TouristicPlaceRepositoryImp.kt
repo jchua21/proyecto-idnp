@@ -2,6 +2,7 @@ package com.jean.touraqp.touristicPlaces.data.repository
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 import com.jean.touraqp.core.constants.DBCollection
 import com.jean.touraqp.core.seed.TouristicPlacesSeed
@@ -27,21 +28,51 @@ class TouristicPlaceRepositoryImp @Inject constructor(
 
     private val touristicPlacesCollection = db.collection(DBCollection.TOURISTIC_PLACE)
 
-    override suspend fun getAllTouristicPlaces(): Flow<ResourceResult<List<TouristicPlace>>> = flow{
-        try {
+    override suspend fun getAllTouristicPlaces(): Flow<ResourceResult<List<TouristicPlace>>> =
+        flow {
+            try {
 
+                emit(ResourceResult.Loading(message = "Loading..."))
+                val result = touristicPlacesCollection.limit(3).get().await()
+                val places = result.documents
+                emit(
+                    ResourceResult.Success(
+                        data = places.map { touristicPlace ->
+                            val touristicPlaceDto = touristicPlace.toObject<TouristicPlaceDto>()
+                                ?: throw Exception("Data Mismatch")
+                            touristicPlaceDto.toTouristicPlace(touristicPlace.id)
+                        },
+                        message = "Successful Query"
+                    )
+                )
+            } catch (e: Exception) {
+                Log.d(TAG, "${e.message}")
+                emit(
+                    ResourceResult.Success(
+                        message = "Something went wrong"
+                    )
+                )
+            }
+        }
+
+    override suspend fun getTouristicPlaceDetail(id: String): Flow<ResourceResult<TouristicPlace>> = flow{
+        try {
             emit(ResourceResult.Loading(message = "Loading..."))
-            val snapshotPlaces = touristicPlacesCollection.limit(3).get().await()
-            val places = snapshotPlaces.toObjects<TouristicPlaceDto>()
-            emit(ResourceResult.Success(
-                data = places.map { it.toTouristicPlace() },
-                message = "Successful Query"
-            ))
+            val result = touristicPlacesCollection.document(id).get().await()
+            val place = result.toObject<TouristicPlaceDto>()
+            emit(
+                ResourceResult.Success(
+                    data = place?.toTouristicPlace(result.id),
+                    message = "Successful Query"
+                )
+            )
         }catch (e: Exception){
             Log.d(TAG, "${e.message}")
-            emit(ResourceResult.Success(
-                message = "Something went wrong"
-            ))
+            emit(
+                ResourceResult.Success(
+                    message = "Something went wrong"
+                )
+            )
         }
     }
 }
