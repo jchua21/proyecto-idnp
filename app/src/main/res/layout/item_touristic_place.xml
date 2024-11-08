@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_marginBottom="@dimen/touristic_place_card_margin_bottom"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:padding="@dimen/touristic_place_card_inner_padding"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:contentDescription="Touristic Place Image"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:background="@color/md_theme_secondary" />
+
+        <TextView
+            android:id="@+id/titlePlace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Place Title"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="5dp"
+            />
+
+        <TextView
+            android:id="@+id/descriptionPlace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="4"
+            android:ellipsize="end"
+            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

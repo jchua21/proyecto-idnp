@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObjects
 import com.jean.touraqp.core.constants.DBCollection
+import com.jean.touraqp.core.seed.TouristicPlacesSeed
 import com.jean.touraqp.core.utils.ResourceResult
 import com.jean.touraqp.touristicPlaces.data.mapper.toTouristicPlace
 import com.jean.touraqp.touristicPlaces.data.remote.dto.TouristicPlaceDto
@@ -28,14 +29,14 @@ class TouristicPlaceRepositoryImp @Inject constructor(
 
     override suspend fun getAllTouristicPlaces(): Flow<ResourceResult<List<TouristicPlace>>> = flow{
         try {
+
             emit(ResourceResult.Loading(message = "Loading..."))
-            val snapshotPlaces = touristicPlacesCollection.get().await()
+            val snapshotPlaces = touristicPlacesCollection.limit(3).get().await()
             val places = snapshotPlaces.toObjects<TouristicPlaceDto>()
             emit(ResourceResult.Success(
                 data = places.map { it.toTouristicPlace() },
                 message = "Successful Query"
             ))
-//            addTouristicPlaces()
         }catch (e: Exception){
             Log.d(TAG, "${e.message}")
             emit(ResourceResult.Success(

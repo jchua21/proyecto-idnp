@@ -2,6 +2,8 @@
 <resources>
     <dimen name="bottom_nav_radius">40dp</dimen>
     <dimen name="top_bar_radius">20dp</dimen>
-    <dimen name="padding_horizontal">10dp</dimen>
-    <dimen name="padding_vertical">10dp</dimen>
+    <dimen name="main_padding_horizontal">20dp</dimen>
+    <dimen name="main_padding_vertical">20dp</dimen>
+    <dimen name="touristic_place_card_margin_bottom">20dp</dimen>
+    <dimen name="touristic_place_card_inner_padding">20dp</dimen>
 </resources>

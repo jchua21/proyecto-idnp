@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/core_graph"
-    app:startDestination="@id/homeScreenFragment">
+    app:startDestination="@id/searchScreenFragment">
     <fragment
         android:id="@+id/homeScreenFragment"
         android:name="com.jean.touraqp.home.ui.HomeScreenFragment"
@@ -19,4 +19,9 @@
         android:name="com.jean.touraqp.profile.ui.ProfileScreenFragment"
         android:label="fragment_profile_screen"
         tools:layout="@layout/fragment_profile_screen" />
+    <fragment
+        android:id="@+id/searchScreenFragment"
+        android:name="com.jean.touraqp.touristicPlaces.presentation.search.SearchScreenFragment"
+        android:label="fragment_search_screen"
+        tools:layout="@layout/fragment_search_screen" />
 </navigation>
