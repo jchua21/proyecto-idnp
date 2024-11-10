@@ -10,4 +10,5 @@ data class TouristicPlaceDto(
     val address: String = "",
     val createdAt: Timestamp = Timestamp.now(),
     val updatedAt: Timestamp = Timestamp.now(),
+    val imageUrl: String = ""
 )

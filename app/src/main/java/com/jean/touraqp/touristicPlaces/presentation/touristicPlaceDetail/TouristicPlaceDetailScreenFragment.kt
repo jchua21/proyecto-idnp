@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
+import coil3.load
 import com.jean.touraqp.R
 import com.jean.touraqp.databinding.FragmentTouristicPlaceDetailScreenBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,18 +28,19 @@ class TouristicPlaceDetailScreenFragment : Fragment(R.layout.fragment_touristic_
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentTouristicPlaceDetailScreenBinding.bind(view)
-
         initObservers()
     }
 
     private fun initObservers() {
+
        lifecycleScope.launch {
            repeatOnLifecycle(Lifecycle.State.STARTED){
                viewModel.state.collect(){ state ->
                     binding?.apply {
+                        progressBarTouristicPlaceDetail.isVisible = state.isLoading
                         touristicPlaceTitle.text = state.touristicPlace?.name
                         touristicPlaceDescription.text = state.touristicPlace?.description
-                        progressBarTouristicPlaceDetail.isVisible = state.isLoading
+                        touristicPlaceImage.load(state.touristicPlace?.imageUrl)
                     }
                }
            }

@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil3.load
 import com.jean.touraqp.R
 import com.jean.touraqp.databinding.ItemTouristicPlaceBinding
 import com.jean.touraqp.touristicPlaces.domain.model.TouristicPlace
@@ -42,6 +43,7 @@ class SearchListAdapter(
                 root.setOnClickListener(){onClickListener(touristicPlace.id)}
                 titlePlace.text = touristicPlace.name
                 descriptionPlace.text = touristicPlace.description
+                imagePlace.load(touristicPlace.imageUrl)
             }
         }
     }

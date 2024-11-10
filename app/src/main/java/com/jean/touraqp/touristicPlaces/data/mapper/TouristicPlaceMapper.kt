@@ -7,6 +7,7 @@ fun TouristicPlaceDto.toTouristicPlace(id: String) : TouristicPlace {
     return TouristicPlace(
         id = id,
         name = name,
-        description = description
+        description = description,
+        imageUrl = imageUrl
     )
 }

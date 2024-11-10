@@ -72,6 +72,11 @@ dependencies {
     //Argon (Hash password)
     implementation  ("com.lambdapioneer.argon2kt:argon2kt:1.6.0")
 
+    //Coil: Images
+    implementation("io.coil-kt.coil3:coil:3.0.1")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.1")
+
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

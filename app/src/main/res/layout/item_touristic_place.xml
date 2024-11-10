@@ -12,9 +12,11 @@
         android:orientation="vertical">
 
         <ImageView
+            android:id="@+id/imagePlace"
             android:contentDescription="Touristic Place Image"
             android:layout_width="match_parent"
             android:layout_height="220dp"
+            android:scaleType="centerCrop"
             android:background="@color/md_theme_secondary" />
 
         <TextView

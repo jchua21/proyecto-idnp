@@ -43,8 +43,8 @@ class SearchScreenFragment : Fragment(R.layout.fragment_search_screen) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 searchViewModel.searchState.collect() { state ->
-                    searchListAdapter.updateList(state.touristicPlaceList)
                     fragmentSearchScreenBinding?.progressBar?.isVisible = state.isLoading
+                    searchListAdapter.updateList(state.touristicPlaceList)
                 }
             }
         }
