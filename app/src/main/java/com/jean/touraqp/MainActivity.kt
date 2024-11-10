@@ -21,5 +21,6 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         screenSplash.setKeepOnScreenCondition{ false }
+
     }
 }

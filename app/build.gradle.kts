@@ -63,6 +63,7 @@ dependencies {
     annotationProcessor(libs.androidx.room.compiler)
     // To use Kotlin symbol processing (ksp)
     ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 
     //Firestore
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))

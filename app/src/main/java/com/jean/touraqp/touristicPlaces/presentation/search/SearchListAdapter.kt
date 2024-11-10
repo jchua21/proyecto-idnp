@@ -4,15 +4,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil3.ImageLoader
 import coil3.load
+import coil3.request.crossfade
+import coil3.size.Scale
+import coil3.size.Size
 import com.jean.touraqp.R
 import com.jean.touraqp.databinding.ItemTouristicPlaceBinding
 import com.jean.touraqp.touristicPlaces.domain.model.TouristicPlace
+import javax.inject.Inject
 
 class SearchListAdapter(
     private var touristicPlaceList: List<TouristicPlace> = emptyList(),
     private val onClickListener: (id: String) -> Unit
 ): RecyclerView.Adapter<SearchListAdapter.SearchListViewHolder>(){
+
+    @Inject lateinit var imageLoader: ImageLoader
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchListViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -43,7 +50,10 @@ class SearchListAdapter(
                 root.setOnClickListener(){onClickListener(touristicPlace.id)}
                 titlePlace.text = touristicPlace.name
                 descriptionPlace.text = touristicPlace.description
-                imagePlace.load(touristicPlace.imageUrl)
+                imagePlace.load(touristicPlace.imageUrl){
+                    size(Size.ORIGINAL)
+                }
+
             }
         }
     }

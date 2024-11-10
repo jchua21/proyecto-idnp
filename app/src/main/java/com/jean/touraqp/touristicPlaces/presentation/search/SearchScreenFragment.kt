@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil3.ImageLoader
 import com.jean.touraqp.R
 import com.jean.touraqp.databinding.FragmentSearchScreenBinding
 import dagger.hilt.android.AndroidEntryPoint
