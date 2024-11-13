@@ -13,7 +13,11 @@
         android:id="@+id/mapScreenFragment"
         android:name="com.jean.touraqp.touristicPlaces.presentation.map.MapScreenFragment"
         android:label="fragment_map_screen"
-        tools:layout="@layout/fragment_map_screen" />
+        tools:layout="@layout/fragment_map_screen" >
+        <action
+            android:id="@+id/action_mapScreenFragment_to_touristicPlaceDetailScreenFragment"
+            app:destination="@id/touristicPlaceDetailScreenFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileScreenFragment"
         android:name="com.jean.touraqp.profile.ui.ProfileScreenFragment"

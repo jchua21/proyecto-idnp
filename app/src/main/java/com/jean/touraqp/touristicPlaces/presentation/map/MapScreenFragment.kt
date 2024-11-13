@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -65,6 +66,7 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
 
                     if (state.touristicPlaces.isNotEmpty()) {
                         addMarkers(state.touristicPlaces)
+                        onInfoWindowClickListener()
                     }
                 }
             }
@@ -126,12 +128,29 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
     private fun addMarkers(touristicPlaces: List<TouristicPlace>) {
         if (::map.isInitialized) {
             touristicPlaces.forEach { touristicPlace ->
-                val marker = LatLng(touristicPlace.latitude, touristicPlace.longitude)
-                map.addMarker(
-                    MarkerOptions().position(marker).title(touristicPlace.name)
+                val markerLocation = LatLng(touristicPlace.latitude, touristicPlace.longitude)
+
+                //Set an tag to retrieve data
+
+                val markerAdded = map.addMarker(
+                    MarkerOptions().position(markerLocation).title(touristicPlace.name)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_place_img))
                 )
+
+                markerAdded?.tag = touristicPlace.id
             }
+        }
+    }
+
+    private fun onInfoWindowClickListener() {
+        map.setOnInfoWindowClickListener { marker ->
+            val touristicPlaceId = marker.tag as? String ?: return@setOnInfoWindowClickListener
+
+            findNavController().navigate(
+                MapScreenFragmentDirections.actionMapScreenFragmentToTouristicPlaceDetailScreenFragment(
+                    touristicPlaceId
+                )
+            )
         }
     }
 
