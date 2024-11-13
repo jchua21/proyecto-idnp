@@ -28,30 +28,39 @@ class TouristicPlaceRepositoryImp @Inject constructor(
 ) : TouristicPlaceRepository {
 
     companion object {
-        const val TAG = "touristic_place"
+        const val TAG = "touristic_place_repository"
     }
 
     private val touristicPlacesCollection = remoteDB.collection(DBCollection.TOURISTIC_PLACE)
     private val touristicPlaceDao = localDB.getTouristicPlaceDao()
 
-    override suspend fun getAllTouristicPlaces(): Flow<ResourceResult<List<TouristicPlace>>> =
+    override suspend fun getAllTouristicPlaces(fetchFromNetwork: Boolean): Flow<ResourceResult<List<TouristicPlace>>> =
         flow {
             try {
                 Log.d(TAG, "CALLING ")
                 emit(ResourceResult.Loading())
 
-                //Get from network
-                val result = touristicPlacesCollection.limit(3).get().await()
-                val places = result.documents
-                //Convert to Room Entity
-                val touristicPlacesEntities = places.map { touristicPlace ->
-                    val touristicPlaceDto = touristicPlace.toObject<TouristicPlaceDto>()
-                    touristicPlaceDto?.toTouristicPlaceEntity(touristicPlace.id) ?: throw Exception(
-                        "Data Mismatch"
-                    )
+
+                // No network
+                //Get from Room
+                val touristicPlacesEntities = if(fetchFromNetwork){
+                    // Network
+                    //Get from network
+                    val result = touristicPlacesCollection.limit(3).get().await()
+                    val places = result.documents
+                    //Convert to Room Entity
+                    val touristicPlacesEntities = places.map { touristicPlace ->
+                        val touristicPlaceDto = touristicPlace.toObject<TouristicPlaceDto>()
+                        touristicPlaceDto?.toTouristicPlaceEntity(touristicPlace.id) ?: throw Exception(
+                            "Data Mismatch"
+                        )
+                    }
+                    touristicPlaceDao.insertAll(touristicPlacesEntities)
+                    touristicPlacesEntities
+                }else{
+                    Log.d(TAG, "getAllTouristicPlaces: ROOM!!!!!")
+                    touristicPlaceDao.getAllTouristicPlaces()
                 }
-                // Add to Room
-                touristicPlaceDao.insertAll(touristicPlacesEntities)
 
                 val touristicPlaces = touristicPlacesEntities.map { touristicPlaceEntity ->
                     touristicPlaceEntity.toTouristicPlace()

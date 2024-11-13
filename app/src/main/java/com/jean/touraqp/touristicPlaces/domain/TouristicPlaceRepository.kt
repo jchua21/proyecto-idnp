@@ -6,6 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface TouristicPlaceRepository {
 
-    suspend fun getAllTouristicPlaces(): Flow<ResourceResult<List<TouristicPlace>>>
+    suspend fun getAllTouristicPlaces(fetchFromNetwork: Boolean = true): Flow<ResourceResult<List<TouristicPlace>>>
     suspend fun getTouristicPlaceDetail(id: String): Flow<ResourceResult<TouristicPlace>>
 }

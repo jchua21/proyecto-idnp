@@ -5,6 +5,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     alias(libs.plugins.google.gms.google.services)
     id("androidx.navigation.safeargs.kotlin")
+    alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
 
 android {
@@ -30,7 +31,7 @@ android {
             )
         }
     }
-    buildFeatures{
+    buildFeatures {
         viewBinding = true
     }
     compileOptions {
@@ -40,6 +41,14 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+}
+
+secrets {
+
+    propertiesFileName = "secrets.properties"
+    defaultPropertiesFileName = "local.defaults.properties"
+
+    ignoreList.add("sdk.*")
 }
 
 dependencies {
@@ -52,6 +61,7 @@ dependencies {
 
     //Dagger Hilt
     implementation(libs.hilt.android)
+    implementation(libs.play.services.maps)
     ksp(libs.hilt.android.compiler)
 
     //Viewmodel
@@ -71,12 +81,15 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
 
     //Argon (Hash password)
-    implementation  ("com.lambdapioneer.argon2kt:argon2kt:1.6.0")
+    implementation("com.lambdapioneer.argon2kt:argon2kt:1.6.0")
 
     //Coil: Images
     implementation("io.coil-kt.coil3:coil:3.0.1")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.1")
 
+    // Maps SDK for Android
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

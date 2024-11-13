@@ -5,4 +5,6 @@ data class TouristicPlace(
     val name: String,
     val description: String,
     val imageUrl: String,
+    val latitude: Double,
+    val longitude: Double
 )

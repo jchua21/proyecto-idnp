@@ -13,7 +13,9 @@ fun TouristicPlaceDto.toTouristicPlace(id: String) : TouristicPlace {
         id = id,
         name = name,
         description = description,
-        imageUrl = imageUrl
+        imageUrl = imageUrl,
+        longitude = longitude,
+        latitude = latitude
     )
 }
 
@@ -37,6 +39,8 @@ fun TouristicPlaceEntity.toTouristicPlace(): TouristicPlace {
         id = id,
         name = name,
         description = description,
-        imageUrl = imageUrl
+        imageUrl = imageUrl,
+        longitude = longitude,
+        latitude = latitude
     )
 }

@@ -6,4 +6,5 @@ plugins {
     id("com.google.dagger.hilt.android") version "2.48" apply false
     alias(libs.plugins.google.gms.google.services) apply false //minimum required version
     id("androidx.navigation.safeargs.kotlin") version "2.8.0" apply false
+    alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin) apply false
 }
