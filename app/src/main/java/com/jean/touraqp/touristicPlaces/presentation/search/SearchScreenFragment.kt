@@ -12,9 +12,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil3.ImageLoader
 import com.jean.touraqp.R
+import com.jean.touraqp.core.UserSession
 import com.jean.touraqp.databinding.FragmentSearchScreenBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class SearchScreenFragment : Fragment(R.layout.fragment_search_screen) {
@@ -22,6 +24,7 @@ class SearchScreenFragment : Fragment(R.layout.fragment_search_screen) {
     private val searchViewModel: SearchViewModel by viewModels()
     private var fragmentSearchScreenBinding: FragmentSearchScreenBinding? = null
     private lateinit var searchListAdapter: SearchListAdapter
+    @Inject lateinit var userSession: UserSession
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,8 +39,16 @@ class SearchScreenFragment : Fragment(R.layout.fragment_search_screen) {
     }
 
     private fun initUI() {
+        setUserInfo()
         setSearchListAdapter()
         setTouristicPlacesRecyclerView()
+    }
+
+    private fun setUserInfo() {
+        fragmentSearchScreenBinding?.apply {
+            topAppBar.title = "Hola ${userSession.name}"
+            topAppBar.subtitle = "@${userSession.username}"
+        }
     }
 
     private fun initObservers() {
