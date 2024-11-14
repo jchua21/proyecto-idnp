@@ -19,6 +19,7 @@ import coil3.size.Scale
 import coil3.size.Size
 import com.jean.touraqp.R
 import com.jean.touraqp.databinding.FragmentTouristicPlaceDetailScreenBinding
+import com.jean.touraqp.touristicPlaces.presentation.touristicPlaceDetail.review.ReviewModalBottomSheet
 import com.jean.touraqp.touristicPlaces.presentation.touristicPlaceDetail.review.ReviewTouristicPlaceAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -42,6 +43,14 @@ class TouristicPlaceDetailScreenFragment :
     private fun initUI() {
         setReviewAdapter()
         setReviewRecyclerView()
+        setOnClickListenerReviewBtn()
+    }
+
+    private fun setOnClickListenerReviewBtn(){
+       binding?.btnReview?.setOnClickListener(){
+           val bottomSheetDialogFragment =ReviewModalBottomSheet()
+               bottomSheetDialogFragment.show(parentFragmentManager, ReviewModalBottomSheet.TAG)
+       }
     }
 
     private fun setReviewAdapter() {
