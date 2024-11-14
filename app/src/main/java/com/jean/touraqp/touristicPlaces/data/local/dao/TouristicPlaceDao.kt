@@ -15,6 +15,9 @@ interface TouristicPlaceDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(touristicPlaces: List<TouristicPlaceEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(touristicPlace: TouristicPlaceEntity)
+
     @Query("SELECT * FROM touristic_place WHERE id == :id")
     suspend fun getTouristicPlaceById(id: String): TouristicPlaceEntity
 }

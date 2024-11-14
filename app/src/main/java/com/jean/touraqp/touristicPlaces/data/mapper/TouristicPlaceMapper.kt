@@ -5,7 +5,9 @@ import androidx.annotation.RequiresApi
 import androidx.room.ColumnInfo
 import androidx.room.PrimaryKey
 import com.jean.touraqp.touristicPlaces.data.local.entities.TouristicPlaceEntity
+import com.jean.touraqp.touristicPlaces.data.remote.dto.ReviewDto
 import com.jean.touraqp.touristicPlaces.data.remote.dto.TouristicPlaceDto
+import com.jean.touraqp.touristicPlaces.domain.model.Review
 import com.jean.touraqp.touristicPlaces.domain.model.TouristicPlace
 
 fun TouristicPlaceDto.toTouristicPlace(id: String) : TouristicPlace {
@@ -15,7 +17,16 @@ fun TouristicPlaceDto.toTouristicPlace(id: String) : TouristicPlace {
         description = description,
         imageUrl = imageUrl,
         longitude = longitude,
-        latitude = latitude
+        latitude = latitude,
+        reviews = reviews.map { it.toReview() }
+    )
+}
+
+fun ReviewDto.toReview(): Review {
+    return Review(
+        username = username,
+        rate = rate,
+        comment = comment
     )
 }
 
@@ -29,7 +40,7 @@ fun TouristicPlaceDto.toTouristicPlaceEntity(id: String): TouristicPlaceEntity {
         latitude = latitude,
         imageUrl = imageUrl,
         createdAt = createdAt.toDate().time,
-        updatedAt = updatedAt.toDate().time
+        updatedAt = updatedAt.toDate().time,
     )
 }
 

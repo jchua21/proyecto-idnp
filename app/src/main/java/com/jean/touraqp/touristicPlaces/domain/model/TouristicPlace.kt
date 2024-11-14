@@ -6,5 +6,6 @@ data class TouristicPlace(
     val description: String,
     val imageUrl: String,
     val latitude: Double,
-    val longitude: Double
+    val longitude: Double,
+    val reviews: List<Review> = emptyList()
 )

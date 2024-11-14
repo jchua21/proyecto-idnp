@@ -40,32 +40,35 @@ class TouristicPlaceRepositoryImp @Inject constructor(
                 Log.d(TAG, "CALLING ")
                 emit(ResourceResult.Loading())
 
-
-                // No network
-                //Get from Room
-                val touristicPlacesEntities = if(fetchFromNetwork){
-                    // Network
+                val touristicPlaces = if (fetchFromNetwork) {
                     //Get from network
                     val result = touristicPlacesCollection.limit(3).get().await()
                     val places = result.documents
-                    //Convert to Room Entity
-                    val touristicPlacesEntities = places.map { touristicPlace ->
+
+                    val touristicPlaces = places.map() { touristicPlace ->
+                        //Convert to DTO
                         val touristicPlaceDto = touristicPlace.toObject<TouristicPlaceDto>()
-                        touristicPlaceDto?.toTouristicPlaceEntity(touristicPlace.id) ?: throw Exception(
-                            "Data Mismatch"
-                        )
+                            ?: throw Exception("Data mismatch")
+                        //Store in Room
+                        val touristicPlaceEntity =
+                            touristicPlaceDto.toTouristicPlaceEntity(id = touristicPlace.id)
+                        touristicPlaceDao.insert(touristicPlaceEntity)
+
+
+                        return@map touristicPlaceDto.toTouristicPlace(touristicPlace.id)
                     }
-                    touristicPlaceDao.insertAll(touristicPlacesEntities)
-                    touristicPlacesEntities
-                }else{
-                    Log.d(TAG, "getAllTouristicPlaces: ROOM!!!!!")
-                    touristicPlaceDao.getAllTouristicPlaces()
+
+                    touristicPlaces
+                } else {
+                    // Get from ROOM
+                    val touristicPlacesEntities = touristicPlaceDao.getAllTouristicPlaces()
+                    val touristicPlaces = touristicPlacesEntities.map { touristicPlaceEntity ->
+                        touristicPlaceEntity.toTouristicPlace()
+                    }
+                    touristicPlaces
                 }
 
-                val touristicPlaces = touristicPlacesEntities.map { touristicPlaceEntity ->
-                    touristicPlaceEntity.toTouristicPlace()
-                }
-
+                Log.d(TAG, "$touristicPlaces")
                 //Send results
                 emit(
                     ResourceResult.Success(
@@ -87,9 +90,12 @@ class TouristicPlaceRepositoryImp @Inject constructor(
         flow {
             try {
                 emit(ResourceResult.Loading(message = "Loading..."))
-                //Single Source of Truth
-                val result = touristicPlaceDao.getTouristicPlaceById(id)
-                val place = result.toTouristicPlace()
+                val docRef = touristicPlacesCollection.document(id)
+                val result = docRef.get().await()
+                val placeDto =
+                    result.toObject<TouristicPlaceDto>() ?: throw Exception("Data Mismatch")
+                val place = placeDto.toTouristicPlace(id)
+
                 emit(
                     ResourceResult.Success(
                         data = place,
