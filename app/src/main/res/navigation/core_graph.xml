@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/core_graph"
-    app:startDestination="@id/homeScreenFragment">
+    app:startDestination="@id/searchScreenFragment">
     <fragment
         android:id="@+id/homeScreenFragment"
         android:name="com.jean.touraqp.home.ui.HomeScreenFragment"
@@ -11,12 +11,34 @@
         tools:layout="@layout/fragment_home_screen" />
     <fragment
         android:id="@+id/mapScreenFragment"
-        android:name="com.jean.touraqp.map.ui.MapScreenFragment"
+        android:name="com.jean.touraqp.touristicPlaces.presentation.map.MapScreenFragment"
         android:label="fragment_map_screen"
-        tools:layout="@layout/fragment_map_screen" />
+        tools:layout="@layout/fragment_map_screen" >
+        <action
+            android:id="@+id/action_mapScreenFragment_to_touristicPlaceDetailScreenFragment"
+            app:destination="@id/touristicPlaceDetailScreenFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileScreenFragment"
         android:name="com.jean.touraqp.profile.ui.ProfileScreenFragment"
         android:label="fragment_profile_screen"
         tools:layout="@layout/fragment_profile_screen" />
+    <fragment
+        android:id="@+id/searchScreenFragment"
+        android:name="com.jean.touraqp.touristicPlaces.presentation.search.SearchScreenFragment"
+        android:label="fragment_search_screen"
+        tools:layout="@layout/fragment_search_screen" >
+        <action
+            android:id="@+id/action_searchScreenFragment_to_touristicPlaceDetailScreenFragment"
+            app:destination="@id/touristicPlaceDetailScreenFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/touristicPlaceDetailScreenFragment"
+        android:name="com.jean.touraqp.touristicPlaces.presentation.touristicPlaceDetail.TouristicPlaceDetailScreenFragment"
+        android:label="fragment_touristic_place_detail_screen"
+        tools:layout="@layout/fragment_touristic_place_detail_screen" >
+        <argument
+            android:name="touristicPlaceId"
+            app:argType="string" />
+    </fragment>
 </navigation>
