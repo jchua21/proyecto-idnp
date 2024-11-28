@@ -15,15 +15,13 @@ class ReviewModalBottomSheet : BottomSheetDialogFragment(R.layout.fragment_modal
     private var binding : FragmentModalReviewBottomSheetBinding? = null
 
     companion object {
-        const val TAG = "ReviewModalBottomSheet"
+        const val TAG = "review_modal"
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-        val a = dialog.behavior
         return dialog
     }
-
 
     override fun onStart() {
         super.onStart()

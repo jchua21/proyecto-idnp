@@ -37,8 +37,5 @@
         android:name="com.jean.touraqp.touristicPlaces.presentation.touristicPlaceDetail.TouristicPlaceDetailScreenFragment"
         android:label="fragment_touristic_place_detail_screen"
         tools:layout="@layout/fragment_touristic_place_detail_screen" >
-        <argument
-            android:name="touristicPlaceId"
-            app:argType="string" />
     </fragment>
 </navigation>

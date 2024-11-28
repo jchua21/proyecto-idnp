@@ -58,6 +58,8 @@ dependencies {
     // Views/Fragments Navigation integration
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
+    implementation("androidx.hilt:hilt-navigation-fragment:1.2.0")
+
 
     //Dagger Hilt
     implementation(libs.hilt.android)
