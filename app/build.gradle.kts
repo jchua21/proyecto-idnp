@@ -1,10 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
+    alias(libs.plugins.google.ksp)
+    alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.google.gms.google.services)
-    id("androidx.navigation.safeargs.kotlin")
+    alias(libs.plugins.androidx.navigation.safe.args)
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
 
@@ -58,7 +58,7 @@ dependencies {
     // Views/Fragments Navigation integration
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
-    implementation("androidx.hilt:hilt-navigation-fragment:1.2.0")
+    implementation(libs.androidx.hilt.navigation.fragment)
 
 
     //Dagger Hilt
@@ -78,20 +78,19 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     //Firestore
-    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
-    implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-auth")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.google.firebase.firestore)
 
     //Argon (Hash password)
-    implementation("com.lambdapioneer.argon2kt:argon2kt:1.6.0")
+    implementation(libs.argon2kt)
 
     //Coil: Images
-    implementation("io.coil-kt.coil3:coil:3.0.1")
-    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.1")
+    implementation(libs.coil)
+    implementation(libs.coil.network.okhttp)
 
     // Maps SDK for Android
-    implementation("com.google.android.gms:play-services-maps:19.0.0")
-    implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
