@@ -50,7 +50,7 @@ class MapLocation @Inject constructor(
     }
 
 
-    fun showShowRationale() = ActivityCompat.shouldShowRequestPermissionRationale(
+    fun shouldShowRationale() = ActivityCompat.shouldShowRequestPermissionRationale(
         context as Activity, Manifest.permission.ACCESS_FINE_LOCATION
     )
 }

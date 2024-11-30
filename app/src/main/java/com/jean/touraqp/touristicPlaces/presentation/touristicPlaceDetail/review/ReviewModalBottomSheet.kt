@@ -15,28 +15,25 @@ class ReviewModalBottomSheet : BottomSheetDialogFragment(R.layout.fragment_modal
     private var binding : FragmentModalReviewBottomSheetBinding? = null
 
     companion object {
-        const val TAG = "ReviewModalBottomSheet"
+        const val TAG = "review_modal"
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-        val a = dialog.behavior
-        return dialog
+        Log.d(TAG, "onCreateDialog")
+        return super.onCreateDialog(savedInstanceState)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentModalReviewBottomSheetBinding.bind(view)
+        val bottomSheet = binding?.standardBottomSheet
+        Log.d(TAG, "binding: ${bottomSheet?.id}")
 
-    override fun onStart() {
-        super.onStart()
-        dialog?.let { dialog ->
-            val bottomSheet = dialog.findViewById<View>(R.id.standard_bottom_sheet)
-//            val bottomSheet = binding?.standardBottomSheet
-            bottomSheet?.let {
-                val behavior = BottomSheetBehavior.from(it)
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
-            }
+        bottomSheet?.let {
+            val behavior = BottomSheetBehavior.from(it)
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
