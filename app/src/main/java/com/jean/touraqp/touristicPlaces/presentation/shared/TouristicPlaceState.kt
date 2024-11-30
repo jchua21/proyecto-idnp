@@ -7,5 +7,6 @@ data class TouristicPlaceState(
     val selectedTouristicPlace: TouristicPlace? = null,
     val isLoading: Boolean = false,
     val hasError: Boolean = false,
-    val searchQuery: String = ""
+    val searchQuery: String = "",
+    val isLocationPermissionGranted : Boolean? = null
 )

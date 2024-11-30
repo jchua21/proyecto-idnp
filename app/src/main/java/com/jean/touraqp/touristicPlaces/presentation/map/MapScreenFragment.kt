@@ -2,7 +2,9 @@ package com.jean.touraqp.touristicPlaces.presentation.map
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -10,6 +12,7 @@ import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Lifecycle
@@ -58,29 +61,82 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
         initMap()
     }
 
+    override fun onStart() {
+        Log.d(TAG, "onStart!!!")
+        launchLocationPermission()
+        super.onStart()
+    }
+
+    override fun onStop() {
+        Log.d(TAG, "onStop")
+        sharedViewModel.onEvent(TouristicPlaceEvent.OnLocationPermissionResult())
+        super.onStop()
+    }
+
     private fun initMap() {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        Log.d(TAG, "onMapAsync!!")
         mapFragment.getMapAsync(this)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        Log.d(TAG, "onMapReady!!")
-
         map = googleMap
         initObservers()
-        launchLocationPermission()
     }
 
     private fun initObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
+
                 launch {
                     sharedViewModel.state.collect() { state ->
                         if (!::map.isInitialized) return@collect
                         if (state.touristicPlaces.isNotEmpty()) {
                             addMarkers(state.touristicPlaces)
                             onInfoWindowClickListener()
+                        }
+                        if (state.isLocationPermissionGranted != null) {
+                            Log.d(TAG, "initObservers: ${state.isLocationPermissionGranted}")
+                            if (!state.isLocationPermissionGranted) {
+                                val isPermanentlyDisabled = !shouldShowRequestPermissionRationale(
+                                    Manifest.permission.ACCESS_FINE_LOCATION
+                                )
+                                showPermissionDialog(
+                                    isPermanentlyDisabled = isPermanentlyDisabled,
+                                    title = "Permiso Requerido",
+                                    message = getLocationPermissionDialogMessage(
+                                        isPermanentlyDisabled
+                                    ),
+                                    onPositiveButton = {
+                                        if (isPermanentlyDisabled) {
+                                            goToSettings()
+                                        } else {
+                                            sharedViewModel.onEvent(TouristicPlaceEvent.OnLocationPermissionResult())
+                                            launchLocationPermission()
+                                        }
+                                    }
+                                )
+                            } else {
+                                map.isMyLocationEnabled = true
+                                val location = mapLocation.getCurrentUserLocation()
+                                if (location != null) {
+                                    if (!mapLocation.isInArequipa(location)) {
+                                        AlertDialog.Builder(requireContext())
+                                            .setTitle("Esperamos verte de nuevo!")
+                                            .setMessage("Parece que no estas en Arequipa. Visitanos pronto para explorar los lugares mas hermosos!")
+                                            .setPositiveButton("OK") { dialog, _ ->
+                                                dialog.dismiss()
+                                            }
+                                            .show()
+                                    }
+                                    map.moveCamera(
+                                        CameraUpdateFactory.newLatLngZoom(
+                                            location,
+                                            14f
+                                        )
+                                    )
+                                }
+                            }
+
                         }
                     }
                 }
@@ -97,61 +153,43 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
         }
     }
 
+    private fun getLocationPermissionDialogMessage(isPermanentlyDisabled: Boolean): String {
+        return if (isPermanentlyDisabled) {
+            "Parece que has rechazado el permiso de locacion. Puedes ir a la configuracion de la applicaion para concederlo"
+        } else {
+            "El permiso de locacion es requerido para poder mostrarte la ubicacion de los lugares turisticos."
+        }
+    }
+
+    private fun showPermissionDialog(
+        title: String,
+        message: String,
+        onPositiveButton: (dialog: DialogInterface?) -> Unit,
+        isPermanentlyDisabled: Boolean
+    ) {
+        val positiveBtnMessage = if (isPermanentlyDisabled) "Granted" else "OK"
+
+        AlertDialog.Builder(requireContext())
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(positiveBtnMessage) { dialog, _ -> onPositiveButton(dialog) }
+            .show()
+    }
+
+    private fun goToSettings() {
+        //Go to settings
+        Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", requireContext().packageName, null)
+        ).also {
+            startActivity(it)
+        }
+    }
+
     @SuppressLint("MissingPermission")
     private val locationPermissionResultLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            lifecycleScope.launch {
-                if (!granted) {
-                    val isPermanentlyDeclined =
-                        !shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
-                    if (isPermanentlyDeclined) {
-                        AlertDialog.Builder(requireContext())
-                            .setTitle("Permiso Requerido")
-                            .setMessage("Parece que has rechazado el permiso de locacion. Puedes ir a la configuracion de la applicaion para concederlo")
-                            .setPositiveButton("Conceder") { dialog, which ->
-                                //Go to settings
-                                Intent(
-                                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                    Uri.fromParts("package", requireContext().packageName, null)
-                                ).also {
-                                    startActivity(it)
-                                }
-                            }
-                            .show()
-                    } else {
-                        AlertDialog.Builder(requireContext())
-                            .setTitle("Permiso Requerido")
-                            .setMessage("El permiso de locacion es requerido para poder mostrarte la ubicacion de los lugares turisticos.")
-                            .setPositiveButton("Ok") { dialog, which ->
-                                launchLocationPermission()
-                            }
-                            .show()
-                    }
-
-                    return@launch
-                }
-
-
-                map.isMyLocationEnabled = true
-                val location = mapLocation.getCurrentUserLocation()
-                if (location != null) {
-                    if (!mapLocation.isInArequipa(location)) {
-                        AlertDialog.Builder(requireContext())
-                            .setTitle("Esperamos verte de nuevo!")
-                            .setMessage("Parece que no estas en Arequipa. Visitanos pronto para explorar los lugares mas hermosos!")
-                            .setPositiveButton("OK") { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                            .show()
-                    }
-                    map.moveCamera(
-                        CameraUpdateFactory.newLatLngZoom(
-                            location,
-                            14f
-                        )
-                    )
-                }
-            }
+            sharedViewModel.onEvent(TouristicPlaceEvent.OnLocationPermissionResult(granted))
         }
 
 
@@ -185,6 +223,4 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
             MapScreenFragmentDirections.actionMapScreenFragmentToTouristicPlaceDetailScreenFragment()
         )
     }
-
-
 }

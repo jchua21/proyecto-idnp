@@ -36,12 +36,20 @@ class SharedViewModel @Inject constructor(
     val effect = _effect.receiveAsFlow()
 
 
+
     fun onEvent(e: TouristicPlaceEvent){
         when(e){
             is TouristicPlaceEvent.OnSelectTouristicPlace -> {
                 onSelectTouristicPlace(e.id)
             }
+            is TouristicPlaceEvent.OnLocationPermissionResult -> {
+                onLocationPermissionResult(e.granted)
+            }
         }
+    }
+
+    private fun onLocationPermissionResult(granted: Boolean? = null){
+        _state.update { it.copy(isLocationPermissionGranted = granted) }
     }
 
     private fun onSelectTouristicPlace(id: String) {

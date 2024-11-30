@@ -71,7 +71,6 @@ class TouristicPlaceDetailScreenFragment :
                 sharedViewModel.state.collect() { state ->
                     binding?.apply {
                         progressBarTouristicPlaceDetail.isVisible = state.isLoading
-
                         reviewsAdapter.updateList(state.selectedTouristicPlace?.reviews.orEmpty())
                         touristicPlaceTitle.text = state.selectedTouristicPlace?.name
                         touristicPlaceDescription.text = state.selectedTouristicPlace?.description
