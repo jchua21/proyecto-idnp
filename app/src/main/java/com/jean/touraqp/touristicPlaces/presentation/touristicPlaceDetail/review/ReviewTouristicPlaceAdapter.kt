@@ -42,7 +42,7 @@ class ReviewTouristicPlaceAdapter(
 
         fun bind(review: Review){
             binding.apply {
-                reviewUsername.text = review.username
+                reviewUsername.text = review.user.username
                 reviewComment.text = review.comment
                 reviewRating.rating = review.rate.toFloat()
             }

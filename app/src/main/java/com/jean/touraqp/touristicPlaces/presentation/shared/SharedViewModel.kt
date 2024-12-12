@@ -5,8 +5,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jean.touraqp.core.utils.ResourceResult
+import com.jean.touraqp.core.utils.onError
+import com.jean.touraqp.core.utils.onSuccess
 import com.jean.touraqp.touristicPlaces.domain.TouristicPlaceRepository
+import com.jean.touraqp.touristicPlaces.domain.model.Review
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,8 +39,6 @@ class SharedViewModel @Inject constructor(
     private val _effect = Channel<TouristicPlaceEffect>()
     val effect = _effect.receiveAsFlow()
 
-
-
     fun onEvent(e: TouristicPlaceEvent){
         when(e){
             is TouristicPlaceEvent.OnSelectTouristicPlace -> {
@@ -45,6 +47,15 @@ class SharedViewModel @Inject constructor(
             is TouristicPlaceEvent.OnLocationPermissionResult -> {
                 onLocationPermissionResult(e.granted)
             }
+            is TouristicPlaceEvent.OnAddReviewClick -> {
+                onButtonReviewClick(e.review)
+            }
+        }
+    }
+
+    private fun onButtonReviewClick(review: Review) {
+        viewModelScope.launch(Dispatchers.IO) {
+//            touristicPlaceRepository.addReview(review)
         }
     }
 
@@ -66,23 +77,14 @@ class SharedViewModel @Inject constructor(
 
     private fun getTouristicPlaces() {
         viewModelScope.launch {
-            touristicPlaceRepository.getAllTouristicPlaces().collect() { result ->
-                when (result) {
-                    is ResourceResult.Error -> {
-                        _state.value = TouristicPlaceState(hasError = true)
-                    }
-
-                    is ResourceResult.Loading -> {
-                        _state.value =
-                            TouristicPlaceState(isLoading = true)
-                    }
-
-                    is ResourceResult.Success -> {
-                        _state.value =
-                            TouristicPlaceState(touristicPlaces = result.data ?: emptyList())
-                    }
+            touristicPlaceRepository.getAllTouristicPlaces()
+                .onSuccess { result ->
+                _state.value =
+                    TouristicPlaceState(touristicPlaces = result ?: emptyList())
                 }
-            }
+                .onError {
+                    _state.value = TouristicPlaceState(hasError = true)
+                }
         }
     }
 }
