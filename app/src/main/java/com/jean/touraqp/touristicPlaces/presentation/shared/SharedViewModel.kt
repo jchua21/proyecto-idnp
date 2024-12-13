@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jean.touraqp.auth.presentation.model.UserUI
 import com.jean.touraqp.core.utils.ResourceResult
 import com.jean.touraqp.core.utils.onError
 import com.jean.touraqp.core.utils.onSuccess
@@ -39,14 +40,16 @@ class SharedViewModel @Inject constructor(
     private val _effect = Channel<TouristicPlaceEffect>()
     val effect = _effect.receiveAsFlow()
 
-    fun onEvent(e: TouristicPlaceEvent){
-        when(e){
+    fun onEvent(e: TouristicPlaceEvent) {
+        when (e) {
             is TouristicPlaceEvent.OnSelectTouristicPlace -> {
                 onSelectTouristicPlace(e.id)
             }
+
             is TouristicPlaceEvent.OnLocationPermissionResult -> {
                 onLocationPermissionResult(e.granted)
             }
+
             is TouristicPlaceEvent.OnAddReviewClick -> {
                 onButtonReviewClick(e.review)
             }
@@ -59,7 +62,7 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    private fun onLocationPermissionResult(granted: Boolean? = null){
+    private fun onLocationPermissionResult(granted: Boolean? = null) {
         _state.update { it.copy(isLocationPermissionGranted = granted) }
     }
 
@@ -79,8 +82,11 @@ class SharedViewModel @Inject constructor(
         viewModelScope.launch {
             touristicPlaceRepository.getAllTouristicPlaces()
                 .onSuccess { result ->
-                _state.value =
-                    TouristicPlaceState(touristicPlaces = result ?: emptyList())
+                    _state.update {
+                        it.copy(
+                            touristicPlaces = result
+                        )
+                    }
                 }
                 .onError {
                     _state.value = TouristicPlaceState(hasError = true)

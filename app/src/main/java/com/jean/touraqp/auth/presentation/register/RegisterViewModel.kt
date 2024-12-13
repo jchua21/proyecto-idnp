@@ -12,7 +12,6 @@ import com.jean.touraqp.auth.domain.validation.ValidateUsernameUseCase
 import com.jean.touraqp.auth.domain.validation.ValidationResult
 import com.jean.touraqp.auth.presentation.model.UserUI
 import com.jean.touraqp.auth.presentation.model.toUser
-import com.jean.touraqp.core.UserSession
 import com.jean.touraqp.core.utils.onError
 import com.jean.touraqp.core.utils.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,7 +32,6 @@ class RegisterViewModel @Inject constructor(
     private val validatePasswordUseCase: ValidatePasswordUseCase,
     private val validateConfirmPasswordUseCase: ValidateConfirmPasswordUseCase,
     private val registerUserUseCase: RegisterUserUseCase,
-    private val userSession: UserSession
 ) : ViewModel() {
 
     //Validation State
@@ -131,14 +129,7 @@ class RegisterViewModel @Inject constructor(
 
                     val userUI = user.toUserUI()
                     _effect.send(
-                        RegisterFormEffect.OnSuccessUserRegistered
-                    )
-                    // Update User Session
-                    userSession.updateSession(
-                        id = userUI.id!!,
-                        name = userUI.name,
-                        email = userUI.email,
-                        username = userUI.email
+                        RegisterFormEffect.OnSuccessUserRegistered(userUI)
                     )
                 }
                 .onError { error ->

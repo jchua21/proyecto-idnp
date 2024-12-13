@@ -1,16 +1,19 @@
 package com.jean.touraqp.auth.presentation.register
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.jean.touraqp.R
+import com.jean.touraqp.core.auth.AuthEvent
+import com.jean.touraqp.core.auth.AuthViewModel
 import com.jean.touraqp.databinding.FragmentRegisterScreenBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -21,6 +24,7 @@ class RegisterScreenFragment : Fragment(R.layout.fragment_register_screen) {
     private var registerScreenBinding: FragmentRegisterScreenBinding? = null
 
     private val registerViewModel: RegisterViewModel by viewModels()
+    private val authViewModel: AuthViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -49,14 +53,21 @@ class RegisterScreenFragment : Fragment(R.layout.fragment_register_screen) {
                 }
                 launch {
                     registerViewModel.effect.collect() { effect ->
-                        when(effect){
+                        when (effect) {
                             is RegisterFormEffect.OnErrorUserRegistered -> {
-                                Toast.makeText(context, effect.message , Toast.LENGTH_SHORT)
+                                Toast.makeText(context, effect.message, Toast.LENGTH_SHORT)
                                     .show()
                             }
-                            RegisterFormEffect.OnSuccessUserRegistered -> {
-                                Toast.makeText(context, "Authenticated Successfully", Toast.LENGTH_SHORT)
+
+                            is RegisterFormEffect.OnSuccessUserRegistered -> {
+                                Toast.makeText(
+                                    context,
+                                    "Authenticated Successfully",
+                                    Toast.LENGTH_SHORT
+                                )
                                     .show()
+
+                                authViewModel.onEvent(AuthEvent.OnUserLoggedIn(effect.user))
                                 findNavController().navigate(R.id.action_global_core_graph)
                             }
                         }

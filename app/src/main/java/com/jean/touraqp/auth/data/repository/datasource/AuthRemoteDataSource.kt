@@ -2,14 +2,12 @@ package com.jean.touraqp.auth.data.repository.datasource
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
 import com.jean.touraqp.auth.data.remote.dto.UserDto
 import com.jean.touraqp.auth.data.remote.dto.toUser
 import com.jean.touraqp.auth.data.utils.PasswordHasher
 import com.jean.touraqp.auth.domain.authentication.model.User
 import com.jean.touraqp.auth.domain.authentication.model.toUserDTO
 import com.jean.touraqp.core.constants.DBCollection
-import com.jean.touraqp.core.utils.ResourceResult
 import com.jean.touraqp.core.utils.Result
 import com.jean.touraqp.core.utils.toObjectWithId
 import kotlinx.coroutines.tasks.await
@@ -17,7 +15,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserRemoteDataSource @Inject constructor(
+class AuthRemoteDataSource @Inject constructor(
     private val db: FirebaseFirestore,
     private val passwordHasher: PasswordHasher
 ) {

@@ -3,12 +3,12 @@ package com.jean.touraqp.auth.presentation.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jean.touraqp.auth.domain.authentication.LogInUserUseCase
+import com.jean.touraqp.auth.domain.authentication.model.toUserUI
 import com.jean.touraqp.auth.domain.validation.ValidateEmailUseCase
 import com.jean.touraqp.auth.domain.validation.ValidatePasswordUseCase
 import com.jean.touraqp.auth.domain.validation.ValidationResult
 import com.jean.touraqp.auth.presentation.model.UserUI
 import com.jean.touraqp.core.utils.ResourceResult
-import com.jean.touraqp.core.UserSession
 import com.jean.touraqp.core.utils.onError
 import com.jean.touraqp.core.utils.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +26,6 @@ class LoginViewModel @Inject constructor(
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
     private val logInUserUseCase: LogInUserUseCase,
-    private val userSession: UserSession
 ) : ViewModel() {
 
     //Error Validation messages
@@ -79,15 +78,10 @@ class LoginViewModel @Inject constructor(
                         it.copy(isLoading = false)
                     }
                     _effect.send(
-                        LoginFormEffect.OnSuccessUserLogin
+                        LoginFormEffect.OnSuccessUserLogin(user.toUserUI())
                     )
-                    // Update User Session
-                    userSession.updateSession(
-                        id = user.id!!,
-                        name = user.name,
-                        email = user.email,
-                        username = user.username
-                    )
+//                    // Update User Session
+
                 }
                 .onError {
                     _state.update {
