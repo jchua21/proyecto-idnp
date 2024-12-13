@@ -1,6 +1,6 @@
-package com.jean.touraqp.auth.ui.model
+package com.jean.touraqp.auth.presentation.model
 
-import com.jean.touraqp.auth.domain.authentication.model.UserDomain
+import com.jean.touraqp.auth.domain.authentication.model.User
 
 data class UserUI(
     val id: String? = null,
@@ -8,11 +8,10 @@ data class UserUI(
     val name: String = "",
     val email: String = "",
     val password: String = "" ,
-    val confirmPassword: String = ""
 )
 
-fun UserUI.toUserDomain(): UserDomain {
-    return UserDomain(
+fun UserUI.toUser(): User {
+    return User(
         email = email,
         name = name,
         password = password,

@@ -1,4 +1,4 @@
-package com.jean.touraqp.auth.ui.login
+package com.jean.touraqp.auth.presentation.login
 
 sealed class LoginFormEvent {
     data class  EmailChanged(val email: String): LoginFormEvent()

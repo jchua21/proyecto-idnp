@@ -1,4 +1,4 @@
-package com.jean.touraqp.auth.ui.register
+package com.jean.touraqp.auth.presentation.register
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -36,23 +36,29 @@ class RegisterScreenFragment : Fragment(R.layout.fragment_register_screen) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    registerViewModel.registrationValidationState.collect() { validationErrors ->
+                    registerViewModel.state.collect() { state ->
                         registerScreenBinding?.apply {
-                            editTextUsername.error = validationErrors.usernameError
-                            editTextName.error = validationErrors.nameError
-                            editTextEmail.error = validationErrors.emailError
-                            editTextPassword.error = validationErrors.passwordError
-                            editTextConfirmPassword.error = validationErrors.confirmPasswordError
+                            editTextUsername.error = state.usernameError
+                            editTextName.error = state.nameError
+                            editTextEmail.error = state.emailError
+                            editTextPassword.error = state.passwordError
+                            editTextConfirmPassword.error = state.confirmPasswordError
+                            btnRegister.isEnabled = !state.isLoading
                         }
                     }
                 }
                 launch {
-                    registerViewModel.resultChannel.collect() { registerResult ->
-                        registerScreenBinding?.btnRegister?.isEnabled = !registerResult.isLoading
-                        Toast.makeText(context, registerResult.resultMessage, Toast.LENGTH_SHORT)
-                            .show()
-                        if(registerResult.isSuccess){
-                            findNavController().navigate(R.id.action_global_core_graph)
+                    registerViewModel.effect.collect() { effect ->
+                        when(effect){
+                            is RegisterFormEffect.OnErrorUserRegistered -> {
+                                Toast.makeText(context, effect.message , Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                            RegisterFormEffect.OnSuccessUserRegistered -> {
+                                Toast.makeText(context, "Authenticated Successfully", Toast.LENGTH_SHORT)
+                                    .show()
+                                findNavController().navigate(R.id.action_global_core_graph)
+                            }
                         }
                     }
                 }

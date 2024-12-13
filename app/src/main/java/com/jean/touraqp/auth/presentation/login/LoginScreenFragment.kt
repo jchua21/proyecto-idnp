@@ -1,7 +1,6 @@
-package com.jean.touraqp.auth.ui.login
+package com.jean.touraqp.auth.presentation.login
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Toast
@@ -53,21 +52,25 @@ class LoginScreenFragment : Fragment(R.layout.fragment_login_screen) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    loginViewModel.loginValidationState.collect() { validationErrors ->
+                    loginViewModel.state.collect() { state ->
                         loginScreenBinding?.apply {
-                            inputTextUsername.error = validationErrors.emailError
-                            inputTextPassword.error = validationErrors.passwordError
+                            inputTextUsername.error = state.emailError
+                            inputTextPassword.error = state.passwordError
+                            btnLogin.isEnabled = !state.isLoading
                         }
                     }
                 }
                 launch {
-                    loginViewModel.operationResulChannel.collect() { loginResult ->
-                        loginScreenBinding?.btnLogin?.isEnabled = !loginResult.isLoading
-                        Toast.makeText(context, loginResult.resultMessage.orEmpty(), Toast.LENGTH_SHORT)
-                            .show()
+                    loginViewModel.effect.collect() { effect ->
+                        when(effect){
+                            is LoginFormEffect.OnErrorUserLogin -> {
+                                Toast.makeText(context, effect.message, Toast.LENGTH_SHORT)
+                                    .show()
 
-                        if(loginResult.isSuccess){
-                            findNavController().navigate(R.id.action_global_core_graph)
+                            }
+                            LoginFormEffect.OnSuccessUserLogin -> {
+                                findNavController().navigate(R.id.action_global_core_graph)
+                            }
                         }
                     }
                 }

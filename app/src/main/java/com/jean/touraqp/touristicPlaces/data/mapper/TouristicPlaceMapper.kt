@@ -1,12 +1,6 @@
 package com.jean.touraqp.touristicPlaces.data.mapper
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.room.ColumnInfo
-import androidx.room.PrimaryKey
-import com.jean.touraqp.auth.ui.model.UserUI
 import com.jean.touraqp.touristicPlaces.data.local.entities.TouristicPlaceEntity
-import com.jean.touraqp.touristicPlaces.data.remote.dto.ReviewDto
 import com.jean.touraqp.touristicPlaces.data.remote.dto.TouristicPlaceDto
 import com.jean.touraqp.touristicPlaces.domain.model.Review
 import com.jean.touraqp.touristicPlaces.domain.model.TouristicPlace
