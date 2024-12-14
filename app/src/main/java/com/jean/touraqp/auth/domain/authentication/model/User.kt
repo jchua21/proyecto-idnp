@@ -9,7 +9,8 @@ data class User(
     val email: String = "",
     val name: String = "",
     val password: String = "",
-    val username: String = ""
+    val username: String = "",
+    val imageUrl: String = "https://utfs.io/f/AFyLEdVPOp24dt2Kt3A0gin2dHAV89k4PWEMefKrjO1mR3Zu"
 ): Identifiable
 
 fun User.toUserUI(): UserUI {
@@ -17,6 +18,7 @@ fun User.toUserUI(): UserUI {
         id = id,
         email= email,
         name = name,
+        imageUrl = imageUrl,
         username = username,
     )
 }

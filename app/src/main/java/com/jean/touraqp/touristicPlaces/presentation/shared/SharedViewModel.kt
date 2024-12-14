@@ -78,8 +78,14 @@ class SharedViewModel @Inject constructor(
 
     private fun getTouristicPlaces() {
         viewModelScope.launch {
+            _state.update {
+                it.copy(isLoading = true)
+            }
             getTouristicPlacesWithReviews.execute()
                 .onSuccess { result ->
+                    _state.update {
+                        it.copy(isLoading = false)
+                    }
                     _state.update {
                         it.copy(
                             touristicPlaces = result.toPresentation()
@@ -87,6 +93,9 @@ class SharedViewModel @Inject constructor(
                     }
                 }
                 .onError {
+                    _state.update {
+                        it.copy(isLoading = false)
+                    }
                     _state.value = TouristicPlaceState(hasError = true)
                 }
         }

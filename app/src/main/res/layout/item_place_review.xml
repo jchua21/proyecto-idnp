@@ -14,6 +14,7 @@
         android:orientation="horizontal">
 
         <ImageView
+            android:id="@+id/reviewUserImage"
             android:layout_width="50dp"
             android:layout_height="50dp"
             tools:background="@color/md_theme_secondaryContainer"
