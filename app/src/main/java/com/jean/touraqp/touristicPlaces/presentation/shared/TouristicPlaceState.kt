@@ -1,12 +1,10 @@
 package com.jean.touraqp.touristicPlaces.presentation.shared
 
-import com.jean.touraqp.auth.domain.authentication.model.User
-import com.jean.touraqp.auth.presentation.model.UserUI
-import com.jean.touraqp.touristicPlaces.domain.model.TouristicPlace
+import com.jean.touraqp.touristicPlaces.presentation.model.TouristicPlaceWithReviewsUI
 
 data class TouristicPlaceState(
-    val touristicPlaces: List<TouristicPlace> = emptyList(),
-    val selectedTouristicPlace: TouristicPlace? = null,
+    val touristicPlaces: List<TouristicPlaceWithReviewsUI> = emptyList(),
+    val selectedTouristicPlace: TouristicPlaceWithReviewsUI? = null,
     val isLoading: Boolean = false,
     val hasError: Boolean = false,
     val searchQuery: String = "",

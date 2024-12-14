@@ -5,15 +5,14 @@ import com.jean.touraqp.touristicPlaces.data.remote.dto.TouristicPlaceDto
 import com.jean.touraqp.touristicPlaces.domain.model.Review
 import com.jean.touraqp.touristicPlaces.domain.model.TouristicPlace
 
-fun TouristicPlaceDto.toTouristicPlace(id: String, reviews: List<Review>,) : TouristicPlace {
+fun TouristicPlaceDto.toTouristicPlace() : TouristicPlace {
     return TouristicPlace(
-        id = id,
+        id = id!!,
         name = name,
         description = description,
         imageUrl = imageUrl,
         longitude = longitude,
         latitude = latitude,
-        reviews = reviews
     )
 }
 

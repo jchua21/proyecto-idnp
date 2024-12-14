@@ -7,13 +7,7 @@ import com.jean.touraqp.core.utils.Identifiable
 data class ReviewDto(
     override var id : String? = "",
     val userId: String = "",
+    val touristicPlaceId: String= "",
     val comment: String = "",
-    val rate: Double = 0.0,
+    val rating: Double = 0.0,
 ): Identifiable
-
-data class ReviewCreationDto(
-    val userId: String = "",
-    val comment: String = "",
-    val rate: Double = 0.0,
-    val touristicPlaceId : String = ""
-)

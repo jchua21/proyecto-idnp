@@ -1,6 +1,5 @@
 package com.jean.touraqp.touristicPlaces.presentation.shared
 
-import com.jean.touraqp.touristicPlaces.data.remote.dto.ReviewCreationDto
 import com.jean.touraqp.touristicPlaces.domain.model.Review
 
 sealed class TouristicPlaceEvent{

@@ -1,15 +1,13 @@
 package com.jean.touraqp.touristicPlaces.presentation.shared
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jean.touraqp.auth.presentation.model.UserUI
-import com.jean.touraqp.core.utils.ResourceResult
 import com.jean.touraqp.core.utils.onError
 import com.jean.touraqp.core.utils.onSuccess
-import com.jean.touraqp.touristicPlaces.domain.TouristicPlaceRepository
 import com.jean.touraqp.touristicPlaces.domain.model.Review
+import com.jean.touraqp.touristicPlaces.domain.usecases.GetTouristicPlacesWithReviews
+import com.jean.touraqp.touristicPlaces.presentation.mapper.toPresentation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -22,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SharedViewModel @Inject constructor(
-    private val touristicPlaceRepository: TouristicPlaceRepository,
+    private val getTouristicPlacesWithReviews: GetTouristicPlacesWithReviews,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -68,7 +66,7 @@ class SharedViewModel @Inject constructor(
 
     private fun onSelectTouristicPlace(id: String) {
         viewModelScope.launch {
-            val selectedTouristicPlace = _state.value.touristicPlaces.find {
+            val selectedTouristicPlace = _state.value.touristicPlaces.find{
                 it.id == id
             }
             _state.update {
@@ -80,11 +78,11 @@ class SharedViewModel @Inject constructor(
 
     private fun getTouristicPlaces() {
         viewModelScope.launch {
-            touristicPlaceRepository.getAllTouristicPlaces()
+            getTouristicPlacesWithReviews.execute()
                 .onSuccess { result ->
                     _state.update {
                         it.copy(
-                            touristicPlaces = result
+                            touristicPlaces = result.toPresentation()
                         )
                     }
                 }

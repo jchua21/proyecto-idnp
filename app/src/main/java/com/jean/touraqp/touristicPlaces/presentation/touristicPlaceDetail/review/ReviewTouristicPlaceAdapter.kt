@@ -7,13 +7,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jean.touraqp.R
 import com.jean.touraqp.databinding.ItemPlaceReviewBinding
 import com.jean.touraqp.touristicPlaces.domain.model.Review
+import com.jean.touraqp.touristicPlaces.domain.model.ReviewWithUser
 
 class ReviewTouristicPlaceAdapter(
-    private var reviewsTouristicPlace: List<Review> = emptyList()
+    private var reviewsTouristicPlace: List<ReviewWithUser> = emptyList()
 ) :
     RecyclerView.Adapter<ReviewTouristicPlaceAdapter.ReviewTouristicPlaceViewHolder>() {
 
-    fun updateList(reviews: List<Review>){
+    fun updateList(reviews: List<ReviewWithUser>){
         this.reviewsTouristicPlace = reviews
         notifyDataSetChanged()
     }
@@ -40,11 +41,11 @@ class ReviewTouristicPlaceAdapter(
 
         private val binding : ItemPlaceReviewBinding = ItemPlaceReviewBinding.bind(view)
 
-        fun bind(review: Review){
+        fun bind(review: ReviewWithUser){
             binding.apply {
                 reviewUsername.text = review.user.username
                 reviewComment.text = review.comment
-                reviewRating.rating = review.rate.toFloat()
+                reviewRating.rating = review.rating.toFloat()
             }
         }
     }

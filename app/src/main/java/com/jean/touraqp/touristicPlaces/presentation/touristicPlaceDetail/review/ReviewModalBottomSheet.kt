@@ -4,11 +4,15 @@ import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.jean.touraqp.R
+import com.jean.touraqp.core.auth.AuthViewModel
 import com.jean.touraqp.databinding.FragmentModalReviewBottomSheetBinding
 import com.jean.touraqp.touristicPlaces.domain.model.Review
 import com.jean.touraqp.touristicPlaces.presentation.shared.SharedViewModel
@@ -18,7 +22,9 @@ class ReviewModalBottomSheet :
     BottomSheetDialogFragment(R.layout.fragment_modal_review_bottom_sheet) {
 
     private var binding: FragmentModalReviewBottomSheetBinding? = null
-    private val sharedViewModel : SharedViewModel by hiltNavGraphViewModels(R.id.core_graph)
+    private val authViewModel: AuthViewModel by activityViewModels();
+    private val sharedViewModel: SharedViewModel by hiltNavGraphViewModels(R.id.core_graph)
+    private val reviewViewModel: ReviewViewModel by viewModels()
 
     companion object {
         const val TAG = "review_modal"
@@ -44,13 +50,16 @@ class ReviewModalBottomSheet :
             }
 
             btnAddReview.setOnClickListener() {
-                Log.d(TAG, "Create Review....")
-//                val review = Review(
-//                    rate = reviewRating.rating.toDouble(),
-//                    comment = editTextComment.text,
-//
-//                )
-//                sharedViewModel.onEvent(TouristicPlaceEvent.OnAddReviewClick())
+                reviewViewModel.onEvent(ReviewModalEvent.OnUserAddReview(
+                    authViewModel.state.value.id!!,
+                    sharedViewModel.state.value.selectedTouristicPlace!!.id
+                ))
+            }
+            reviewRating.setOnRatingBarChangeListener { _, rating, _ ->
+                reviewViewModel.onEvent(ReviewModalEvent.OnUserSelectedRating(rating.toDouble()))
+            }
+            editTextComment.doOnTextChanged { text, _, _, _ ->
+                reviewViewModel.onEvent(ReviewModalEvent.OnUserCommented(text.toString()))
             }
         }
     }

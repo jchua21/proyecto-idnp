@@ -15,7 +15,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AuthRemoteDataSource @Inject constructor(
+class UserRemoteDataSource @Inject constructor(
     private val db: FirebaseFirestore,
     private val passwordHasher: PasswordHasher
 ) {
@@ -86,5 +86,11 @@ class AuthRemoteDataSource @Inject constructor(
         }
 
         return Result.Success(loggedUser)
+    }
+
+    suspend fun getUserById(id: String): User{
+        val result = usersCollection.document(id).get().await()
+        val userDto = result.toObjectWithId<UserDto>()
+        return userDto.toUser()
     }
 }

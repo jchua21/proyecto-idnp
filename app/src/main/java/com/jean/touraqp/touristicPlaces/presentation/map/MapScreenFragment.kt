@@ -30,6 +30,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.jean.touraqp.R
 import com.jean.touraqp.touristicPlaces.domain.model.TouristicPlace
+import com.jean.touraqp.touristicPlaces.domain.model.TouristicPlaceWithReviews
+import com.jean.touraqp.touristicPlaces.presentation.model.TouristicPlaceWithReviewsUI
 import com.jean.touraqp.touristicPlaces.presentation.shared.SharedViewModel
 import com.jean.touraqp.touristicPlaces.presentation.shared.TouristicPlaceEffect
 import com.jean.touraqp.touristicPlaces.presentation.shared.TouristicPlaceEvent
@@ -91,6 +93,7 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
                     sharedViewModel.state.collect() { state ->
                         if (!::map.isInitialized) return@collect
                         if (state.touristicPlaces.isNotEmpty()) {
+
                             addMarkers(state.touristicPlaces)
                             onInfoWindowClickListener()
                         }
@@ -197,7 +200,7 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
         locationPermissionResultLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
-    private fun addMarkers(touristicPlaces: List<TouristicPlace>) {
+    private fun addMarkers(touristicPlaces: List<TouristicPlaceWithReviewsUI>) {
         if (::map.isInitialized) {
             touristicPlaces.forEach { touristicPlace ->
                 val markerLocation = LatLng(touristicPlace.latitude, touristicPlace.longitude)
