@@ -12,7 +12,7 @@ fun TouristicPlaceWithReviews.toPresentation(): TouristicPlaceWithReviewsUI {
         longitude = longitude,
         latitude = latitude,
         imageUrl = imageUrl,
-        reviews = reviews
+        reviews = reviews.toMutableList()
     )
 }
 

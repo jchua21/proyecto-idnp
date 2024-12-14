@@ -14,13 +14,18 @@ import com.jean.touraqp.touristicPlaces.domain.model.Review
 import com.jean.touraqp.touristicPlaces.domain.model.ReviewWithUser
 
 class ReviewTouristicPlaceAdapter(
-    private var reviewsTouristicPlace: List<ReviewWithUser> = emptyList()
+    private var reviewsTouristicPlace: MutableList<ReviewWithUser> = mutableListOf()
 ) :
     RecyclerView.Adapter<ReviewTouristicPlaceAdapter.ReviewTouristicPlaceViewHolder>() {
 
-    fun updateList(reviews: List<ReviewWithUser>){
+    fun updateList(reviews: MutableList<ReviewWithUser>){
         this.reviewsTouristicPlace = reviews
         notifyDataSetChanged()
+    }
+
+    fun addReview(review: ReviewWithUser){
+        this.reviewsTouristicPlace.add(review)
+        notifyItemInserted(reviewsTouristicPlace.size - 1)
     }
 
     override fun onCreateViewHolder(

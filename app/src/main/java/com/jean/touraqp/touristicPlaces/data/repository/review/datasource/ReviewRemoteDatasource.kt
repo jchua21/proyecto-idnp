@@ -9,8 +9,10 @@ import com.jean.touraqp.core.utils.Result
 import com.jean.touraqp.core.utils.toObjectWithId
 import com.jean.touraqp.touristicPlaces.data.mapper.toReview
 import com.jean.touraqp.touristicPlaces.data.mapper.toReviewDTO
+import com.jean.touraqp.touristicPlaces.data.mapper.toReviewInsertDTO
 import com.jean.touraqp.touristicPlaces.data.remote.dto.ReviewDto
 import com.jean.touraqp.touristicPlaces.domain.model.Review
+import com.jean.touraqp.touristicPlaces.domain.model.ReviewWithUser
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -24,7 +26,7 @@ class ReviewRemoteDatasource @Inject constructor(
     }
 
     suspend fun addReview(review: Review): Review {
-        val reviewDto = review.toReviewDTO()
+        val reviewDto = review.toReviewInsertDTO()
         val reviewReference = reviewCollection.add(reviewDto).await()
         val reviewAdded = reviewReference.get().await().toObjectWithId<ReviewDto>()
         return reviewAdded.toReview()

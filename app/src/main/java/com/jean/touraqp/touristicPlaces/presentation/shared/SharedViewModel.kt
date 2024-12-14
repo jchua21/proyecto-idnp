@@ -1,15 +1,16 @@
 package com.jean.touraqp.touristicPlaces.presentation.shared
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jean.touraqp.core.utils.onError
 import com.jean.touraqp.core.utils.onSuccess
-import com.jean.touraqp.touristicPlaces.domain.model.Review
+import com.jean.touraqp.touristicPlaces.domain.model.ReviewWithUser
 import com.jean.touraqp.touristicPlaces.domain.usecases.GetTouristicPlacesWithReviews
 import com.jean.touraqp.touristicPlaces.presentation.mapper.toPresentation
+import com.jean.touraqp.touristicPlaces.presentation.touristicPlaceDetail.review.ReviewUI
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -48,15 +49,30 @@ class SharedViewModel @Inject constructor(
                 onLocationPermissionResult(e.granted)
             }
 
-            is TouristicPlaceEvent.OnAddReviewClick -> {
-                onButtonReviewClick(e.review)
+            is TouristicPlaceEvent.OnReviewAdded -> {
+                onReviewAdded(e.review)
             }
         }
     }
 
-    private fun onButtonReviewClick(review: Review) {
-        viewModelScope.launch(Dispatchers.IO) {
-//            touristicPlaceRepository.addReview(review)
+    private fun onReviewAdded(review: ReviewWithUser) {
+        _state.update {
+            val updatedTouristicPlace = it.selectedTouristicPlace?.copy(
+                reviews = it.selectedTouristicPlace.reviews.toMutableList().apply {
+                    add(review)
+                }
+            )
+            val updatedTouristicPlaces = it.touristicPlaces.map { touristicPlace ->
+                if (touristicPlace.id == updatedTouristicPlace?.id) {
+                    updatedTouristicPlace
+                } else {
+                    touristicPlace
+                }
+            }
+            it.copy(
+                selectedTouristicPlace = updatedTouristicPlace,
+                touristicPlaces = updatedTouristicPlaces
+            )
         }
     }
 
@@ -66,7 +82,7 @@ class SharedViewModel @Inject constructor(
 
     private fun onSelectTouristicPlace(id: String) {
         viewModelScope.launch {
-            val selectedTouristicPlace = _state.value.touristicPlaces.find{
+            val selectedTouristicPlace = _state.value.touristicPlaces.find {
                 it.id == id
             }
             _state.update {

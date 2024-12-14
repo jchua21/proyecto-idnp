@@ -68,14 +68,16 @@ class TouristicPlaceDetailScreenFragment :
     private fun initObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                sharedViewModel.state.collect() { state ->
-                    binding?.apply {
-                        progressBarTouristicPlaceDetail.isVisible = state.isLoading
-                        reviewsAdapter.updateList(state.selectedTouristicPlace?.reviews.orEmpty())
-                        touristicPlaceTitle.text = state.selectedTouristicPlace?.name
-                        touristicPlaceDescription.text = state.selectedTouristicPlace?.description
-                        touristicPlaceImage.load(state.selectedTouristicPlace?.imageUrl) {
-                            size(Size.ORIGINAL)
+                launch {
+                    sharedViewModel.state.collect() { state ->
+                        binding?.apply {
+                            progressBarTouristicPlaceDetail.isVisible = state.isLoading
+                            reviewsAdapter.updateList(state.selectedTouristicPlace?.reviews ?: mutableListOf())
+                            touristicPlaceTitle.text = state.selectedTouristicPlace?.name
+                            touristicPlaceDescription.text = state.selectedTouristicPlace?.description
+                            touristicPlaceImage.load(state.selectedTouristicPlace?.imageUrl) {
+                                size(Size.ORIGINAL)
+                            }
                         }
                     }
                 }

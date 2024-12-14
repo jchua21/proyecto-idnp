@@ -9,5 +9,5 @@ data class TouristicPlaceWithReviewsUI(
     val imageUrl: String,
     val latitude: Double,
     val longitude: Double,
-    val reviews: List<ReviewWithUser>
+    val reviews: MutableList<ReviewWithUser>
 )

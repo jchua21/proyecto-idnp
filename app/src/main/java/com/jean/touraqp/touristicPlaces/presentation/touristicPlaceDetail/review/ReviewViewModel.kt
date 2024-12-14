@@ -9,8 +9,10 @@ import com.jean.touraqp.touristicPlaces.domain.ReviewRepository
 import com.jean.touraqp.touristicPlaces.domain.model.Review
 import com.jean.touraqp.touristicPlaces.domain.usecases.AddReviewUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,6 +25,9 @@ class ReviewViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(ReviewUI())
     val state = _state.asStateFlow()
+
+    private val _effect = Channel<ReviewModalEffect>()
+    val effect = _effect.receiveAsFlow()
 
     companion object {
         const val TAG = "review_vm"
@@ -48,9 +53,9 @@ class ReviewViewModel @Inject constructor(
         viewModelScope.launch {
             addReviewUseCase.execute(reviewUI.toReview())
                 .onSuccess { review ->
-                    Log.d(TAG, "Success: $review")
-                }.onError {
-                    Log.d(TAG, "Error: $it")
+                    _effect.send(ReviewModalEffect.OnReviewAdded(review))
+                }.onError {error ->
+                    Log.d(TAG, "Error: ${error.message}")
                 }
         }
     }

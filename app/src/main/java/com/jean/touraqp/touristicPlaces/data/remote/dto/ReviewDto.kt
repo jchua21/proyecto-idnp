@@ -11,3 +11,10 @@ data class ReviewDto(
     val comment: String = "",
     val rating: Double = 0.0,
 ): Identifiable
+
+data class ReviewInsertDto(
+    val userId: String = "",
+    val touristicPlaceId: String= "",
+    val comment: String = "",
+    val rating: Double = 0.0,
+)

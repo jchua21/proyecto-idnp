@@ -17,6 +17,6 @@ fun ReviewUI.toReview(): Review{
         userId = userId,
         touristicPlaceId = touristicPlaceId,
         comment = comment,
-        rating = rating
+        rating = rating,
     )
 }
