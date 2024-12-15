@@ -14,9 +14,10 @@ class GetTouristicPlacesWithReviews @Inject constructor(
     private val touristicPlaceRepository: TouristicPlaceRepository,
     private val userRepository: UserRepository
 ) {
-    suspend fun execute(): Result<List<TouristicPlaceWithReviews>, Exception> {
+    suspend fun execute(query : String = ""): Result<List<TouristicPlaceWithReviews>, Exception> {
         val result = try {
-            val touristicPlaces = touristicPlaceRepository.getAllTouristicPlaces()
+            val touristicPlaces = touristicPlaceRepository.getTouristicPlaces(query = query)
+
             val reviews = touristicPlaces.map { touristicPlace ->
                 val reviewsByTouristicPlace =
                     reviewRepository.getByTouristicPlaceId(touristicPlace.id)

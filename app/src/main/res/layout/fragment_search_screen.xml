@@ -98,12 +98,12 @@
 
 
     <com.google.android.material.search.SearchView
+        android:id="@+id/searchView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:hint="Busca aqui"
         app:layout_anchor="@+id/searchBar"
         app:layout_anchorGravity="center">
-
         <!-- Search suggestions/results go here (ScrollView, RecyclerView, etc.). -->
     </com.google.android.material.search.SearchView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

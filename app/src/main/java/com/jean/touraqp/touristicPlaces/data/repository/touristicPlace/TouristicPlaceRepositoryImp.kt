@@ -30,8 +30,11 @@ class TouristicPlaceRepositoryImp @Inject constructor(
         const val TAG = "touristic_place_repository"
     }
 
-    override suspend fun getAllTouristicPlaces(fetchFromNetwork: Boolean): List<TouristicPlace> {
-        val touristicPlaces = remoteDatasource.getAllTouristicPlaces()
-        return  touristicPlaces
+    override suspend fun getTouristicPlaces(
+        fetchFromNetwork: Boolean,
+        query: String
+    ): List<TouristicPlace> {
+        val touristicPlaces = remoteDatasource.getTouristicPlaces(query)
+        return touristicPlaces
     }
 }

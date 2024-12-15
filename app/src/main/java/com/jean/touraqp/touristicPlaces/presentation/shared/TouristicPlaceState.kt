@@ -4,6 +4,7 @@ import com.jean.touraqp.touristicPlaces.presentation.model.TouristicPlaceWithRev
 
 data class TouristicPlaceState(
     val touristicPlaces: List<TouristicPlaceWithReviewsUI> = emptyList(),
+    val filteredTouristicPlaces:List<TouristicPlaceWithReviewsUI> = emptyList(),
     val selectedTouristicPlace: TouristicPlaceWithReviewsUI? = null,
     val isLoading: Boolean = false,
     val hasError: Boolean = false,
