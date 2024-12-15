@@ -9,7 +9,6 @@ import com.jean.touraqp.core.utils.onSuccess
 import com.jean.touraqp.touristicPlaces.domain.model.ReviewWithUser
 import com.jean.touraqp.touristicPlaces.domain.usecases.GetTouristicPlacesWithReviews
 import com.jean.touraqp.touristicPlaces.presentation.mapper.toPresentation
-import com.jean.touraqp.touristicPlaces.presentation.touristicPlaceDetail.review.ReviewUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,6 +51,48 @@ class SharedViewModel @Inject constructor(
             is TouristicPlaceEvent.OnReviewAdded -> {
                 onReviewAdded(e.review)
             }
+
+            is TouristicPlaceEvent.OnSearchInputChanged -> {
+                onSearchInputChanged(e.query)
+            }
+
+            TouristicPlaceEvent.OnSearchAction -> {
+                onSearchAction()
+            }
+        }
+    }
+
+    private fun onSearchAction(){
+        viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    isLoading = true
+                )
+            }
+
+            val filteredResults = if (state.value.searchQuery.isEmpty()) {
+                state.value.touristicPlaces
+            } else {
+                state.value.touristicPlaces.filter {
+                    it.name.contains(state.value.searchQuery, ignoreCase = true)
+                }
+            }
+
+            _state.update {
+                it.copy(
+                    filteredTouristicPlaces = filteredResults,
+                    isLoading = false
+                )
+            }
+
+        }
+    }
+
+    private fun onSearchInputChanged(query: String){
+        _state.update {
+            it.copy(
+                searchQuery = query
+            )
         }
     }
 
@@ -99,21 +140,22 @@ class SharedViewModel @Inject constructor(
             }
             getTouristicPlacesWithReviews.execute()
                 .onSuccess { result ->
-                    _state.update {
-                        it.copy(isLoading = false)
-                    }
+                    val resultUI = result.toPresentation()
+
                     _state.update {
                         it.copy(
-                            touristicPlaces = result.toPresentation()
+                            touristicPlaces = resultUI,
+                            filteredTouristicPlaces = resultUI
                         )
                     }
                 }
-                .onError {
-                    _state.update {
-                        it.copy(isLoading = false)
-                    }
+                .onError {error ->
                     _state.value = TouristicPlaceState(hasError = true)
                 }
+
+            _state.update {
+                it.copy(isLoading = false)
+            }
         }
     }
 }

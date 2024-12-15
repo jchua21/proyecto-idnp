@@ -17,8 +17,24 @@ class TouristicPlaceRemoteDatasource @Inject constructor(
 ) {
     private val touristicPlaceCollection = db.collection(DBCollection.TOURISTIC_PLACE)
 
-    suspend fun getAllTouristicPlaces(): List<TouristicPlace> {
-        val touristicPlacesReference = touristicPlaceCollection.limit(3).get().await().documents
+    suspend fun getTouristicPlaces(query: String): List<TouristicPlace> {
+        Log.d(TAG, "getTouristicPlaces: ${query}")
+        val touristicPlacesReference = if (query.isNotEmpty()) {
+            touristicPlaceCollection
+                .whereEqualTo("name", query)
+                .limit(3)
+                .get()
+                .await()
+                .documents
+        } else {
+            touristicPlaceCollection
+                .limit(3)
+                .get()
+                .await()
+                .documents
+        }
+
+//        val touristicPlacesReference = touristicPlaceCollection.limit(3).get().await().documents
         val touristicPlacesDto = touristicPlacesReference.map { it.toObjectWithId<TouristicPlaceDto>() }
         val touristicPlaces = touristicPlacesDto.map { it.toTouristicPlace() }
         return touristicPlaces

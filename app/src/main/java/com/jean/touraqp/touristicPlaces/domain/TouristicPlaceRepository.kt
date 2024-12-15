@@ -5,5 +5,5 @@ import com.jean.touraqp.touristicPlaces.domain.model.TouristicPlace
 
 interface TouristicPlaceRepository {
 
-    suspend fun getAllTouristicPlaces(fetchFromNetwork: Boolean = true): List<TouristicPlace>
+    suspend fun getTouristicPlaces(fetchFromNetwork: Boolean = true, query: String = ""): List<TouristicPlace>
 }
