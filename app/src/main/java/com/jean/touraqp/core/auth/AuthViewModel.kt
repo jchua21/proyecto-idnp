@@ -1,6 +1,7 @@
 package com.jean.touraqp.core.auth
 
 import androidx.lifecycle.ViewModel
+import com.google.firebase.firestore.auth.User
 import com.jean.touraqp.auth.presentation.model.UserUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +33,16 @@ class AuthViewModel @Inject constructor() : ViewModel(){
             AuthEvent.OnUserLoggedOut -> {
                 onUserLoggedOut()
             }
+
+            is AuthEvent.OnInformationUserUpdated -> {
+                onUpdateUser(e.user)
+            }
+        }
+    }
+
+    private fun onUpdateUser(user: UserUI) {
+        _state.update {
+            user
         }
     }
 }

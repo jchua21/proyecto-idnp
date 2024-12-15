@@ -88,9 +88,33 @@ class UserRemoteDataSource @Inject constructor(
         return Result.Success(loggedUser)
     }
 
-    suspend fun getUserById(id: String): User{
+    suspend fun getUserById(id: String): User {
         val result = usersCollection.document(id).get().await()
         val userDto = result.toObjectWithId<UserDto>()
         return userDto.toUser()
+    }
+
+    suspend fun updateUser(user: User): User {
+        //Check if the email already exits
+        val userWithEmailInUse =
+            usersCollection.whereEqualTo("email", user.email).get()
+                .await().documents
+
+        val isEmailInUse = userWithEmailInUse.size > 0 && userWithEmailInUse[0].id != user.id
+
+        if (isEmailInUse) throw Exception("Email already in use")
+
+        // Update specific fields in the user's document
+        val userRef = usersCollection.document(user.id!!)
+        userRef.update(
+            "username", user.username,
+            "name", user.name,
+            "email", user.email,
+            "imageUrl", user.imageUrl
+        ).await()
+
+        val userUpdated = userRef.get().await().toObjectWithId<User>()
+
+        return userUpdated
     }
 }

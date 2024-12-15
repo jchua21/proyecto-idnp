@@ -28,7 +28,8 @@ fun User.toUserDTO(): UserDto{
         email = email,
         name = name,
         password = password,
-        username = username
+        username = username,
+
     )
 }
 

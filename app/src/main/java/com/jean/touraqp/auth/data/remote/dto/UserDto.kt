@@ -10,6 +10,7 @@ data class UserDto(
     val name: String = "",
     val password: String = "",
     val username: String = "",
+    val imageUrl: String = "",
     val createdAt: Timestamp = Timestamp.now(),
     val updatedAt: Timestamp = Timestamp.now(),
 ): Identifiable
