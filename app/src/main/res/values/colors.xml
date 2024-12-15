@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="route_color">#FF0000</color> <!-- Example color: Red -->
+    <color name="blue">#4285F4</color> <!-- Google's blue color -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="auth_title">#090F47</color>

@@ -37,14 +37,29 @@ import com.jean.touraqp.touristicPlaces.presentation.shared.TouristicPlaceEffect
 import com.jean.touraqp.touristicPlaces.presentation.shared.TouristicPlaceEvent
 import com.jean.touraqp.touristicPlaces.utils.MapLocation
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
+
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.PopupMenu
+import com.google.android.gms.maps.Projection
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCallback {
     private val sharedViewModel: SharedViewModel by hiltNavGraphViewModels(R.id.core_graph)
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    var poly: Polyline? = null
 
     @Inject
     lateinit var mapLocation: MapLocation
@@ -56,6 +71,44 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+    }
+
+    fun createRoute(start: LatLng, end: LatLng) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val startCoordinates = "${start.longitude},${start.latitude}"
+            val endCoordinates = "${end.longitude},${end.latitude}"
+            val call = getRetrofit().create(ApiService::class.java)
+                .getRoute(getString(R.string.api_open_route_key), startCoordinates, endCoordinates)
+            if (call.isSuccessful) {
+                val routeResponse = call.body() as? RouteResponse
+                withContext(Dispatchers.Main) {
+                    drawRoute(routeResponse)
+                }
+            } else {
+                Log.i("createRoute", "Route request failed")
+            }
+        }
+    }
+
+    private fun drawRoute(routeResponse: RouteResponse?) {
+        poly?.remove()
+
+        val polyLineOptions = PolylineOptions()
+            .color(ContextCompat.getColor(requireContext(), R.color.blue))
+            .width(10f)
+        routeResponse?.features?.first()?.geometry?.coordinates?.forEach {
+            polyLineOptions.add(LatLng(it[1], it[0]))
+        }
+        requireActivity().runOnUiThread {
+            poly = map.addPolyline(polyLineOptions)
+        }
+    }
+
+    fun getRetrofit(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://api.openrouteservice.org/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -82,6 +135,8 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
+        Log.i("mapa", "Mapa listo")
+        onInfoWindowClickListener() // Registra el listener cuando el mapa esté listo
         initObservers()
     }
 
@@ -93,9 +148,8 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
                     sharedViewModel.state.collect() { state ->
                         if (!::map.isInitialized) return@collect
                         if (state.touristicPlaces.isNotEmpty()) {
-
                             addMarkers(state.touristicPlaces)
-                            onInfoWindowClickListener()
+                            // Eliminamos la llamada a onInfoWindowClickListener()
                         }
                         if (state.isLocationPermissionGranted != null) {
                             Log.d(TAG, "initObservers: ${state.isLocationPermissionGranted}")
@@ -139,7 +193,6 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
                                     )
                                 }
                             }
-
                         }
                     }
                 }
@@ -204,12 +257,14 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
         if (::map.isInitialized) {
             touristicPlaces.forEach { touristicPlace ->
                 val markerLocation = LatLng(touristicPlace.latitude, touristicPlace.longitude)
-                //Set a tag to retrieve data
                 val markerAdded = map.addMarker(
-                    MarkerOptions().position(markerLocation).title(touristicPlace.name)
+                    MarkerOptions()
+                        .position(markerLocation)
+                        .title(touristicPlace.name)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_place_img))
                 )
                 markerAdded?.tag = touristicPlace.id
+                Log.i("mapa", "Marcador añadido: ${touristicPlace.name} (${markerLocation.latitude}, ${markerLocation.longitude})")
             }
         }
     }
@@ -217,7 +272,52 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
     private fun onInfoWindowClickListener() {
         map.setOnInfoWindowClickListener { marker ->
             val touristicPlaceId = marker.tag as? String ?: return@setOnInfoWindowClickListener
-            sharedViewModel.onEvent(TouristicPlaceEvent.OnSelectTouristicPlace(touristicPlaceId))
+
+            // Proyección del mapa para convertir coordenadas geográficas a coordenadas de pantalla
+            val projection = map.projection
+            val screenLocation = projection.toScreenLocation(marker.position)
+
+            // Encuentra el FrameLayout raíz para agregar una vista temporal
+            val rootView = requireActivity().findViewById<ViewGroup>(android.R.id.content)
+
+            // Crea una vista temporal como ancla del menú contextual
+            val anchorView = View(requireContext())
+            val layoutParams = FrameLayout.LayoutParams(1, 1)
+            layoutParams.leftMargin = screenLocation.x
+            layoutParams.topMargin = screenLocation.y
+            anchorView.layoutParams = layoutParams
+            rootView.addView(anchorView)
+
+            // Crea y muestra el PopupMenu anclado a la vista temporal
+            val popupMenu = PopupMenu(requireContext(), anchorView)
+            popupMenu.menuInflater.inflate(R.menu.marker_menu, popupMenu.menu)
+
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.action_show_details -> {
+                        sharedViewModel.onEvent(TouristicPlaceEvent.OnSelectTouristicPlace(touristicPlaceId))
+                        true
+                    }
+                    R.id.action_show_route -> {
+                        lifecycleScope.launch {
+                            val startLocation = mapLocation.getCurrentUserLocation()
+                            if (startLocation != null) {
+                                val endLocation = marker.position
+                                createRoute(startLocation, endLocation)
+                            }
+                        }
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+            popupMenu.setOnDismissListener {
+                // Elimina la vista temporal cuando el menú desaparezca
+                rootView.removeView(anchorView)
+            }
+
+            popupMenu.show()
         }
     }
 
