@@ -15,6 +15,7 @@ import coil3.size.Size
 import com.jean.touraqp.R
 import com.jean.touraqp.databinding.FragmentTouristicPlaceDetailScreenBinding
 import com.jean.touraqp.touristicPlaces.presentation.shared.SharedViewModel
+import com.jean.touraqp.touristicPlaces.presentation.touristicPlaceDetail.plane.planeFragment
 import com.jean.touraqp.touristicPlaces.presentation.touristicPlaceDetail.review.ReviewModalBottomSheet
 import com.jean.touraqp.touristicPlaces.presentation.touristicPlaceDetail.review.ReviewTouristicPlaceAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,6 +45,7 @@ class TouristicPlaceDetailScreenFragment :
         setReviewAdapter()
         setReviewRecyclerView()
         setOnClickListenerReviewBtn()
+        setOnClickListenerTouristicPlaneBtn()
     }
 
     private fun setOnClickListenerReviewBtn() {
@@ -62,6 +64,16 @@ class TouristicPlaceDetailScreenFragment :
             setHasFixedSize(true)
             adapter = reviewsAdapter
             layoutManager = LinearLayoutManager(this@TouristicPlaceDetailScreenFragment.context)
+        }
+    }
+
+    private fun setOnClickListenerTouristicPlaneBtn() {
+        binding?.icTouristicPlacePlane?.setOnClickListener {
+            val fragment = planeFragment()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit()
         }
     }
 

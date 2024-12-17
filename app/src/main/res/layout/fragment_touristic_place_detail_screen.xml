@@ -52,6 +52,16 @@
                 app:layout_constraintStart_toStartOf="@+id/icTouristicPlaceFavorite"
                 app:layout_constraintTop_toBottomOf="@id/icTouristicPlaceFavorite" />
 
+            <Button
+                android:id="@+id/icTouristicPlacePlane"
+                style="?attr/materialIconButtonFilledStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/baseline_location_city_24"
+                app:layout_constraintEnd_toEndOf="@id/icTouristicPlaceLocation"
+                app:layout_constraintStart_toStartOf="@+id/icTouristicPlaceLocation"
+                app:layout_constraintTop_toBottomOf="@id/icTouristicPlaceLocation" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
