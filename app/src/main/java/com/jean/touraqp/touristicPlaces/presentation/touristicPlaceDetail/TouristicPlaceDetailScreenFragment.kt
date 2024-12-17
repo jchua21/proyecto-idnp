@@ -9,6 +9,7 @@ import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil3.load
 import coil3.size.Size
@@ -69,11 +70,7 @@ class TouristicPlaceDetailScreenFragment :
 
     private fun setOnClickListenerTouristicPlaneBtn() {
         binding?.icTouristicPlacePlane?.setOnClickListener {
-            val fragment = planeFragment()
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
-                .commit()
+            findNavController().navigate(R.id.planeFragment)
         }
     }
 

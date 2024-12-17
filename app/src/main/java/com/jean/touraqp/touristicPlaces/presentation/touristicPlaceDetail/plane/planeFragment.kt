@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.commit
+import androidx.navigation.fragment.findNavController
 import com.jean.touraqp.R
 
 class planeFragment : Fragment(), PlanoCoordenadas.OnAreaClickListener {
@@ -26,16 +27,13 @@ class planeFragment : Fragment(), PlanoCoordenadas.OnAreaClickListener {
     }
 
     override fun onAreaClicked(areaName: String) {
-        // Reemplaza el contenedor por el fragmento correspondiente
-        val fragment = AreaFragment().apply {
-            arguments = Bundle().apply {
-                putString("areaName", areaName)
-            }
+        val bundle = Bundle().apply {
+            putString("areaName", areaName)
         }
 
-        parentFragmentManager.commit {
-            replace(R.id.fragment_container, fragment)
-            addToBackStack(null)
-        }
+        // Usa NavController para navegar
+        val navController = findNavController()
+        navController.navigate(R.id.infoplane, bundle)
     }
+
 }
