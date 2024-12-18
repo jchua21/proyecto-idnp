@@ -16,6 +16,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -29,6 +30,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
@@ -49,12 +51,14 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCallback {
     private val sharedViewModel: SharedViewModel by hiltNavGraphViewModels(R.id.core_graph)
+    private val mapViewModel: MapViewModel by viewModels()
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     var poly: Polyline? = null
 
     @Inject
     lateinit var mapLocation: MapLocation
+
     @Inject
     lateinit var apiService: ApiService
 
@@ -67,7 +71,7 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
     }
 
-    fun createRoute(start: LatLng, end: LatLng) {
+    private fun createRoute(start: LatLng, end: LatLng) {
         CoroutineScope(Dispatchers.IO).launch {
             val startCoordinates = "${start.longitude},${start.latitude}"
             val endCoordinates = "${end.longitude},${end.latitude}"
@@ -136,7 +140,6 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
                         if (!::map.isInitialized) return@collect
                         if (state.touristicPlaces.isNotEmpty()) {
                             addMarkers(state.touristicPlaces)
-                            // Eliminamos la llamada a onInfoWindowClickListener()
                         }
                         if (state.isLocationPermissionGranted != null) {
                             Log.d(TAG, "initObservers: ${state.isLocationPermissionGranted}")
@@ -172,7 +175,11 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
                                             }
                                             .show()
                                     }
-                                    moveCameraToLocation(location)
+                                        Log.d("DEBUG STATE", "${mapViewModel.state.value}")
+                                        Log.d("DEBUG STATE", "hasIdMarkerSelected : ${mapViewModel.state.value.hasIdMarkerSelected}")
+                                    if (!mapViewModel.state.value.hasIdMarkerSelected) {
+                                        moveCameraToLocation(location)
+                                    }
                                 }
                             }
                         }
@@ -187,11 +194,26 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
                         }
                     }
                 }
+
+                launch {
+                    mapViewModel.state.collect() { state ->
+                        if(state.hasIdMarkerSelected){
+                            moveCameraToMarker(state.markers[state.idMarkerSelected])
+                        }
+                    }
+                }
             }
         }
     }
 
-    private fun moveCameraToLocation(location: LatLng){
+    private fun moveCameraToMarker(marker: Marker?) {
+        if(marker == null) return
+        val location = LatLng(marker.position.latitude, marker.position.longitude)
+        moveCameraToLocation(location)
+        marker.showInfoWindow()
+    }
+
+    private fun moveCameraToLocation(location: LatLng) {
         map.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
                 location,
@@ -246,7 +268,9 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
 
     private fun addMarkers(touristicPlaces: List<TouristicPlaceWithReviewsUI>) {
         if (::map.isInitialized) {
-            touristicPlaces.forEach { touristicPlace ->
+            val markersMap = mutableMapOf<String, Marker?>()
+
+            touristicPlaces.forEach() { touristicPlace ->
                 val markerLocation = LatLng(touristicPlace.latitude, touristicPlace.longitude)
                 val markerAdded = map.addMarker(
                     MarkerOptions()
@@ -255,8 +279,11 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_place_img))
                 )
                 markerAdded?.tag = touristicPlace.id
-                Log.i("mapa", "Marcador añadido: ${touristicPlace.name} (${markerLocation.latitude}, ${markerLocation.longitude})")
+                //Add markers to state
+                markersMap[touristicPlace.id] = markerAdded
             }
+
+            mapViewModel.onEvent(MapEvent.OnAddMarkers(markersMap))
         }
     }
 
@@ -286,9 +313,14 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
             popupMenu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.action_show_details -> {
-                        sharedViewModel.onEvent(TouristicPlaceEvent.OnSelectTouristicPlace(touristicPlaceId))
+                        sharedViewModel.onEvent(
+                            TouristicPlaceEvent.OnSelectTouristicPlace(
+                                touristicPlaceId
+                            )
+                        )
                         true
                     }
+
                     R.id.action_show_route -> {
                         lifecycleScope.launch {
                             val startLocation = mapLocation.getCurrentUserLocation()
@@ -299,6 +331,7 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
                         }
                         true
                     }
+
                     else -> false
                 }
             }

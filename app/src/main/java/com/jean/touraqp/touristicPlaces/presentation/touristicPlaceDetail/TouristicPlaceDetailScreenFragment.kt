@@ -15,6 +15,7 @@ import coil3.load
 import coil3.size.Size
 import com.jean.touraqp.R
 import com.jean.touraqp.databinding.FragmentTouristicPlaceDetailScreenBinding
+import com.jean.touraqp.touristicPlaces.presentation.map.MapScreenFragmentDirections
 import com.jean.touraqp.touristicPlaces.presentation.shared.SharedViewModel
 import com.jean.touraqp.touristicPlaces.presentation.touristicPlaceDetail.plane.planeFragment
 import com.jean.touraqp.touristicPlaces.presentation.touristicPlaceDetail.review.ReviewModalBottomSheet
@@ -47,6 +48,16 @@ class TouristicPlaceDetailScreenFragment :
         setReviewRecyclerView()
         setOnClickListenerReviewBtn()
         setOnClickListenerTouristicPlaneBtn()
+        setOnClickMapButton()
+    }
+
+    private fun setOnClickMapButton(){
+        binding?.icTouristicPlaceLocation?.setOnClickListener(){
+            Log.d(TAG, "setOnClickMapButton: ")
+            findNavController().navigate(TouristicPlaceDetailScreenFragmentDirections.actionTouristicPlaceDetailScreenFragmentToMapScreenFragment(
+                idSelected = sharedViewModel.state.value.selectedTouristicPlace?.id ?: ""
+            ))
+        }
     }
 
     private fun setOnClickListenerReviewBtn() {
