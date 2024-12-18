@@ -4,12 +4,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.PopupMenu
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -28,9 +30,9 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 import com.jean.touraqp.R
-import com.jean.touraqp.touristicPlaces.domain.model.TouristicPlace
-import com.jean.touraqp.touristicPlaces.domain.model.TouristicPlaceWithReviews
 import com.jean.touraqp.touristicPlaces.presentation.model.TouristicPlaceWithReviewsUI
 import com.jean.touraqp.touristicPlaces.presentation.shared.SharedViewModel
 import com.jean.touraqp.touristicPlaces.presentation.shared.TouristicPlaceEffect
@@ -40,19 +42,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import javax.inject.Inject
-
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.PopupMenu
-import com.google.android.gms.maps.Projection
-import com.google.android.gms.maps.model.Polyline
-import com.google.android.gms.maps.model.PolylineOptions
 import kotlinx.coroutines.withContext
+import retrofit2.Retrofit
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCallback {
@@ -63,6 +55,8 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
 
     @Inject
     lateinit var mapLocation: MapLocation
+    @Inject
+    lateinit var apiService: ApiService
 
     companion object {
         const val TAG = "map_screen"
@@ -77,7 +71,7 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
         CoroutineScope(Dispatchers.IO).launch {
             val startCoordinates = "${start.longitude},${start.latitude}"
             val endCoordinates = "${end.longitude},${end.latitude}"
-            val call = getRetrofit().create(ApiService::class.java)
+            val call = apiService
                 .getRoute(getString(R.string.api_open_route_key), startCoordinates, endCoordinates)
             if (call.isSuccessful) {
                 val routeResponse = call.body() as? RouteResponse
@@ -102,13 +96,6 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
         requireActivity().runOnUiThread {
             poly = map.addPolyline(polyLineOptions)
         }
-    }
-
-    fun getRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://api.openrouteservice.org/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -185,12 +172,7 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
                                             }
                                             .show()
                                     }
-                                    map.moveCamera(
-                                        CameraUpdateFactory.newLatLngZoom(
-                                            location,
-                                            14f
-                                        )
-                                    )
+                                    moveCameraToLocation(location)
                                 }
                             }
                         }
@@ -207,6 +189,15 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
                 }
             }
         }
+    }
+
+    private fun moveCameraToLocation(location: LatLng){
+        map.moveCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                location,
+                14f
+            )
+        )
     }
 
     private fun getLocationPermissionDialogMessage(isPermanentlyDisabled: Boolean): String {

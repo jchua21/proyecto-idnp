@@ -12,6 +12,8 @@ import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavOptions
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jean.touraqp.R
@@ -72,6 +74,17 @@ class SearchScreenFragment : Fragment(R.layout.fragment_search_screen) {
                     false
                 }
             }
+
+            topAppBar.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.logout -> {
+                        performLogout()
+                        true
+                    }
+                    else -> false
+                }
+            }
+
         }
     }
 
@@ -127,5 +140,13 @@ class SearchScreenFragment : Fragment(R.layout.fragment_search_screen) {
             adapter = searchListAdapter
             layoutManager = LinearLayoutManager(this@SearchScreenFragment.context)
         }
+    }
+
+    private fun performLogout() {
+        val navController = requireActivity().findNavController(R.id.fragmentContainer)
+        val navOptions = NavOptions.Builder()
+            .setPopUpTo(R.id.main_graph, true)
+            .build()
+        navController.navigate(R.id.action_global_auth_graph , null, navOptions)
     }
 }

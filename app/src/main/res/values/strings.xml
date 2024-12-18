@@ -1,6 +1,4 @@
 <resources>
     <string name="app_name">TourAQP</string>
     <string name="api_open_route_key">5b3ce3597851110001cf6248ddf73412e6e24875b7b4d90a2a1eb441</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
