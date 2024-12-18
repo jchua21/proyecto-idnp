@@ -22,6 +22,11 @@
 Desarrolllo de un aplicativo que permite listar lugares historicos de la ciudad de Arequipa
 
 Diapositivas tipo informe: 
-
 https://docs.google.com/presentation/d/19O4wbo5apjwWd5ORsvhVZrbNU5UtLuYHi9eY8sDLB_A/edit?usp=sharing 
+
+Github:
+https://github.com/jchua21/proyecto-idnp/tree/main
+
+APK:
+
 
