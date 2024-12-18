@@ -102,6 +102,8 @@ class MapScreenFragment : Fragment(R.layout.fragment_map_screen), OnMapReadyCall
         }
     }
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initMap()
