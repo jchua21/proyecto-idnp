@@ -35,7 +35,8 @@ class ReviewRemoteDatasource @Inject constructor(
     suspend fun getByTouristicPlaceId(touristicPlaceId: String): List<Review> {
         val reviewsResult =
             reviewCollection.whereEqualTo("touristicPlaceId", touristicPlaceId)
-                .limit(3).get()
+//                .limit(3)
+                .get()
                 .await().documents
         val reviewsDto = reviewsResult.map { review ->
             review.toObjectWithId<ReviewDto>()

@@ -22,13 +22,13 @@ class TouristicPlaceRemoteDatasource @Inject constructor(
         val touristicPlacesReference = if (query.isNotEmpty()) {
             touristicPlaceCollection
                 .whereEqualTo("name", query)
-                .limit(3)
+//                .limit(3)
                 .get()
                 .await()
                 .documents
         } else {
             touristicPlaceCollection
-                .limit(3)
+//                .limit(3)
                 .get()
                 .await()
                 .documents
