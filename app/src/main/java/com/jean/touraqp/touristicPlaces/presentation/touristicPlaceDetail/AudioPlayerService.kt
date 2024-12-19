@@ -40,13 +40,15 @@ class AudioPlayerService : Service() {
                 isAppInBackground = false
                 hideNotification()
             }
-            "STOP" -> {
+            "STOP" -> stopPlayback() // Detiene el audio pero mantiene el servicio activo
+            "TERMINATE" -> {
                 stopPlayback()
-                stopSelf()
+                stopSelf() // Finaliza el servicio de manera explícita
             }
         }
         return START_STICKY
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -102,6 +104,11 @@ class AudioPlayerService : Service() {
     }
 
     private fun startPlayback() {
+        if (mediaPlayer == null) {
+            mediaPlayer = MediaPlayer.create(this, R.raw.audio_sample)
+            mediaPlayer?.isLooping = false
+        }
+
         mediaPlayer?.takeIf { !it.isPlaying }?.apply {
             start()
             this@AudioPlayerService.isPlaying = true
@@ -126,11 +133,15 @@ class AudioPlayerService : Service() {
     }
 
     private fun stopPlayback() {
-        mediaPlayer?.takeIf { it.isPlaying }?.apply {
-            stop()
-            this@AudioPlayerService.isPlaying = false
-            Toast.makeText(this@AudioPlayerService, "Audio detenido", Toast.LENGTH_SHORT).show()
-            hideNotification()
+        mediaPlayer?.apply {
+            if (isPlaying) {
+                pause() // Pausa el audio
+                seekTo(0) // Reinicia el audio al principio
+            }
         }
+        isPlaying = false
+        Toast.makeText(this@AudioPlayerService, "Audio detenido", Toast.LENGTH_SHORT).show()
+        hideNotification()
     }
+
 }
