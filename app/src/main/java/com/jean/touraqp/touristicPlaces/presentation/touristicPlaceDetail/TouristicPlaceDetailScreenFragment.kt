@@ -139,14 +139,20 @@ class TouristicPlaceDetailScreenFragment :
 
     private fun setAudioControlButtons() {
         binding?.apply {
-            icTouristicPlaceSound.setOnClickListener { onStartClick() }
+            icTouristicPlaceSound.setOnClickListener {
+                onStartClick()
+            }
             icTouristicPlacePause.setOnClickListener { onPauseClick() }
             icTouristicPlaceStop.setOnClickListener { onStopClick() }
         }
     }
 
     private fun onStartClick() {
-        val intent = Intent(requireContext(), AudioPlayerService::class.java).apply { action = "START" }
+        val placeName = sharedViewModel.state.value.selectedTouristicPlace?.name
+        val intent = Intent(requireContext(), AudioPlayerService::class.java).apply {
+            action = "START"
+            putExtra("PLACE_NAME", placeName)
+        }
         ContextCompat.startForegroundService(requireContext(), intent)
     }
 
