@@ -1,8 +1,10 @@
- # PROYECTO FINAL: RECORRIDO DE EDIFICACIONES HISTORICAS PARTE 3
-
+ 
+# PROYECTO FINAL: RECORRIDO DE EDIFICACIONES HISTORICAS PARTE 3
 
 ## 📚 **Asignatura: Introduccion al Desarrollo de nuevas plataformas**
-
+Sugerencia:
+ - De preferencia para probar la funcionalidad ejecute el APK, ya que el repositorio no posee el API de googleMaps y fallara al cargar el mapa
+ - Puede usar una nueva cuenta o esta cuenta ya creada: admin@admin.com Admin1234
 ---
 
 ### **👨‍💻 Integrantes del Equipo**
@@ -28,5 +30,6 @@ Github:
 https://github.com/jchua21/proyecto-idnp/tree/main
 
 APK con API de maps:https://drive.google.com/drive/folders/1nuTjf_5O94bdlR0yqV4pHD0VBg_HgQlZ?usp=sharing 
+
 
 
