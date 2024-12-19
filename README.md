@@ -27,6 +27,6 @@ https://docs.google.com/presentation/d/19O4wbo5apjwWd5ORsvhVZrbNU5UtLuYHi9eY8sDL
 Github:
 https://github.com/jchua21/proyecto-idnp/tree/main
 
-APK:
+APK:https://drive.google.com/drive/folders/1nuTjf_5O94bdlR0yqV4pHD0VBg_HgQlZ?usp=sharing 
 
 
